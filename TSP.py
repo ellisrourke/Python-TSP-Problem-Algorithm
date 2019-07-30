@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 class tspSolver():
     def __init__(self):
         self.problem = tsplib.load_problem("in_data/eil51.tsp", special="euclidean_2d_jitter")
-        self.tour = list(range(1, self.problem.dimension + 1))
+        #self.tour = list(range(1, self.problem.dimension + 1))
+        self.tour = list(range(1,10))
         self.shortestPathLength = 1000000
 
     def findPathLength(self):
@@ -18,13 +19,14 @@ class tspSolver():
             xList.append(self.problem.get_display(self.tour[i])[0])
             yList.append(self.problem.get_display(self.tour[i])[1])
 
-        for i in range(self.problem.dimension-1):
+        #for i in range(self.problem.dimension-1):
+        for i in range(8):
             pathDistance += tsplib.distances.euclidean((xList[i], yList[i]), (xList[i + 1], yList[i + 1]))
 
         return pathDistance
 
     def findShortest(self):
-        for i in range(10000):
+        for i in range(5000000):
             random.shuffle(self.tour)
             xList = []
             yList = []
