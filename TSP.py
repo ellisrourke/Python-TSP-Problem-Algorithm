@@ -7,7 +7,7 @@ import numpy
 
 class tspSolver():
     def __init__(self):
-        self.problem = tsplib.load_problem("in_data/kroc100.tsp", special="euclidean_2d_jitter")
+        self.problem = tsplib.load_problem("in_data/lin105.tsp", special="euclidean_2d_jitter")
         self.tour = list(range(1, self.problem.dimension + 1))
         #self.tour = list(range(1,10))
         self.shortestPathLength = 1000000
@@ -97,13 +97,10 @@ class tspSolver():
             xList.pop(lowest)
             yList.pop(lowest)
             print(distances)
-
         print(newX,newY)
-
         plt.plot(newX,newY)
         plt.scatter(newX,newY)
         plt.show()
-
         print("path length found",self.findPathLength(newX,newY))
 
 
