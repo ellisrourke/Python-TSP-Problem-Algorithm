@@ -31,25 +31,28 @@ class tour:
             pathDistance += self.problem.wfunc(self.tour[i],self.tour[i+1])
         return pathDistance
 
-
-
-
 class annealing:
     def __init__(self,prob):
         self.problem = prob
+        self.finalPath = None
 
     def acceptProbability(self,t,e,ne):
         if ne < e:
             return  1
-        else:
-            return math.exp((e-ne)/t)
+
+        return math.exp((e-ne)/t)
+
+    def retFinal(self):
+        return self.finalPath
+
 
     def simulate(self):
-        t = 1000
-        cr = 0.005
+        t = 10000
+        cr = 0.003
         currentTour = tour()
 
         self.currentBest = currentTour
+
 
         #cooling
         while t > 1:
@@ -74,24 +77,25 @@ class annealing:
             t *= 1-cr
 
         print("final length: ",self.currentBest.findPathLength())
+        self.finalPath = self.currentBest
 
-    def returnBest(self):
-        return self.currentBest
+
+
 
 
 class Graph:
 
-    def __init__(self, tour,problem):
+    def __init__(self, tour):
         self.xList = []
         self.yList = []
         # Populate axes
         for i in range(0, len(tour)):
-            self.xList.append(problem.get_display(tour[i])[0])
-            self.yList.append(problem.get_display(tour[i])[1])
+            self.xList.append(prob.get_display(tour[i])[0])
+            self.yList.append(prob.get_display(tour[i])[1])
 
     def display_graph(self):
-        plt.plot(self.xList, self.yList, 'C3', lw=3)
-        plt.scatter(self.xList, self.yList, s=120)
+        plt.plot(self.xList, self.yList)
+        plt.scatter(self.xList, self.yList)
         plt.title('TSP ')
         plt.xlabel('Node x Position')
         plt.ylabel('Node y Position')
@@ -101,5 +105,10 @@ class Graph:
 solution = annealing(prob)
 solution.simulate()
 
-plot = Graph(solution.returnBest(),prob)
+# List of best tour
+solutionTour = solution.retFinal().retTour()
+
+print('Final Route: ', solutionTour)
+print('Start: ', prob.get_display(solutionTour[0]), 'End: ', prob.get_display(solutionTour[-1]))
+plot = Graph(solutionTour)
 plot.display_graph()
