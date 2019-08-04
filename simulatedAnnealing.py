@@ -40,15 +40,15 @@ class annealing:
         if ne < e:
             return  1
 
-        return math.exp((e-ne)/t)
+        return math.exp((-(e-ne))/t)
 
     def retFinal(self):
         return self.finalPath
 
 
     def simulate(self):
-        t = 10000
-        cr = 0.003
+        t = 100000.0
+        cr = 0.00001
         currentTour = tour()
 
         self.currentBest = currentTour
@@ -68,20 +68,20 @@ class annealing:
             ce = currentTour.findPathLength()
             ne = newTour.findPathLength()
 
-            if self.acceptProbability(t,ce,ne) > random.uniform(0.0,1.0):
+            if self.acceptProbability(t,ce,ne) > random.uniform(0,1):
                 currentTour = newTour
 
             if currentTour.findPathLength() < self.currentBest.findPathLength():
                 self.currentBest = currentTour
+                #print(self.currentBest.findPathLength())
+                plot=Graph(self.currentBest.retTour())
+                plot.display_graph()
 
             t *= 1-cr
+            print("temp",t)
 
         print("final length: ",self.currentBest.findPathLength())
         self.finalPath = self.currentBest
-
-
-
-
 
 class Graph:
 
@@ -100,6 +100,7 @@ class Graph:
         plt.xlabel('Node x Position')
         plt.ylabel('Node y Position')
         plt.show()
+
 
 
 solution = annealing(prob)
