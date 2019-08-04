@@ -41,7 +41,7 @@ class annealing:
             return  1
 
         return math.exp((-(e-ne))/t)
-
+        #neg
     def retFinal(self):
         return self.finalPath
 
