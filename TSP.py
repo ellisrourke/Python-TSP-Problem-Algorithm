@@ -7,9 +7,8 @@ import numpy
 
 class tspSolver():
     def __init__(self):
-        self.problem = tsplib.load_problem("files/eil51.tsp", special="euclidean_2d_jitter")
+        self.problem = tsplib.load_problem("files/berlin52.tsp", special="euclidean_2d_jitter")
         self.tour = list(range(1, self.problem.dimension + 1))
-        #self.tour = list(range(1,10))
         self.shortestPathLength = 1000000
 
     def findPathLength(self,xList,yList):
@@ -22,54 +21,11 @@ class tspSolver():
             pathDistance += tsplib.distances.euclidean((xList[i], yList[i]), (xList[i + 1], yList[i + 1]))
         return pathDistance
 
-
-    '''
-    def nearestNeighbour(self):
-        for i in range(0, len(self.tour)):
-            xList.append(self.problem.get_display(self.tour[i])[0])
-            yList.append(self.problem.get_display(self.tour[i])[1])
-
-        for i in range(0,len(x)):
-            minDist = 9999
-            keep = [0,0]
-            for j in range(i,len(x)):
-                keep = [0, 0]
-                dist = tsplib.distances.euclidean((x[i],y[i]),(x[j],y[j]))
-                if dist < minDist:
-                    minDist = dist
-                    if x[j] not in pathx and y[j] not in pathy:
-                        minDist = dist
-                        keep[0] = x[j]
-                        keep[1] = y[j]
-            pathx.append(keep[0])
-            pathy.append(keep[1])
-        plt.plot(pathx, pathy)
-        plt.scatter(pathx, pathy)
-        plt.show()
-
-
-    '''
-    def findShortestRandom(self):
-        for i in range(9999999):
-            random.shuffle(self.tour)
-            xList = []
-            yList = []
-            for i in range(0, len(self.tour)):
-                xList.append(self.problem.get_display(self.tour[i])[0])
-                yList.append(self.problem.get_display(self.tour[i])[1])
-
-            newDist = self.findPathLength()
-            if newDist<self.shortestPathLength:
-                self.shortestPathLength = newDist
-                print("new shortest =",self.shortestPathLength)
-                plt.plot(xList, yList)
-                plt.scatter(xList, yList)
-                plt.show()
-
-
     def nn(self):
         xList = []
         yList = []
+
+        myTour = []
         distances = [0 for i in range(len(self.tour))]
 
         newX = []
@@ -97,23 +53,32 @@ class tspSolver():
             xList.pop(lowest)
             yList.pop(lowest)
             print(distances)
+
+
+        for i in range(len(newX)):
+            for j in range(self.problem.dimension):
+                if (self.problem.get_display(self.tour[j])[0]) == newX[i]:
+                    if (self.problem.get_display(self.tour[j])[1]) == newY[i]:
+                        myTour.append(j)
+
+        myTour.append(myTour[0])
+
+
+        newY.append(newY[0])
+        newX.append(newX[0])
         print(newX,newY)
         plt.plot(newX,newY)
         plt.scatter(newX,newY)
         plt.show()
+
+
+        print(myTour)
         print("path length found",self.findPathLength(newX,newY))
 
 
 
 #---------------------------------------------------------------------------------------------------------------------------
 
-'''
-problem = tsp.load_problem('in_data/eil51.tsp',special="euclidean_2d_jitter")
-#tour = list(range(1, problem.dimension + 1))
-tour = list(range(1,6))
 
-'''
 x = tspSolver()
-#x.findShortestRandom()
-#x.nearestNeighbour()
 x.nn()
