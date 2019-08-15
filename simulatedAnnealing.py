@@ -107,14 +107,11 @@ class annealing:
         return self.finalPath
 
     def simulate(self):
-        t = 99999999999999999999999
-        cr = 0.00001
+        t = 1000000000000000000000000
+        cr = 0.00000000000000000000000000000000001
         currentTour = tour()
         print(currentTour.retTour())
         self.currentBest = currentTour
-        #self.currentBest.nn()
-        plot = Graph(self.currentBest.retTour())
-        plot.display_graph()
 
         # cooling
         while t > 0 and (time.time() - start_time)<maxtime:
@@ -126,17 +123,12 @@ class annealing:
             while tourj == touri:
                 tourj = random.randint(1, (self.problem.dimension) -1)
 
-            #print(touri,tourj)
             newtour.makeSwap(touri, tourj)
-            #print(newtour.retTour())
-
 
             ce = self.currentBest.findPathLength()
             ne = newtour.findPathLength()
 
-            ap = self.acceptProbability(t, ce, ne)
-            print(ap)
-            if ap > random.randint(0,1):
+            if self.acceptProbability(t, ce, ne) > random.uniform(0,1):
                 currentTour = newtour
                 #print(currentTour.retTour())
                 #plot = Graph(currentTour.retTour())
@@ -154,6 +146,8 @@ class annealing:
 
         print("final length: ", self.currentBest.findPathLength())
         self.finalPath = self.currentBest
+        plot = Graph(self.currentBest.retTour())
+        plot.display_graph()
 
 
 class Graph:
