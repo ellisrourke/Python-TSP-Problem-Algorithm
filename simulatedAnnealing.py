@@ -2,9 +2,13 @@ import math
 import tsplib95
 import matplotlib.pyplot as plt
 import random
-from datetime import datetime
+import time
 import copy
-random.seed(datetime.now())
+
+maxtime = int(input('enter amount of time: '))
+start_time = time.time()
+
+
 
 prob = tsplib95.load_problem("files/st70.tsp")
 class tour:
@@ -113,7 +117,7 @@ class annealing:
         plot.display_graph()
 
         # cooling
-        while t > 0:
+        while t > 0 and (time.time() - start_time)<maxtime:
             newtour = tour()
             newtour.tour = copy.deepcopy(self.currentBest.tour)
 
