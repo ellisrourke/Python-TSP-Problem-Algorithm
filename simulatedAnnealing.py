@@ -1,20 +1,19 @@
-import random
 import math
 import tsplib95
 import matplotlib.pyplot as plt
-
+import random
+from datetime import datetime
+import copy
+random.seed(datetime.now())
 
 prob = tsplib95.load_problem("files/berlin52.tsp")
-
-
 
 class tour:
     def __init__(self):
         self.problem = prob = tsplib95.load_problem("files/berlin52.tsp")
-        self.tour = list(range(1,self.problem.dimension + 1))
-        #random.shuffle(self.tour)
-        #self.tour.append(self.tour[0])
-        #print(self.tour)
+        self.tour = list(range(1, self.problem.dimension + 1))
+        random.shuffle(self.tour)
+        self.tour.append(self.tour[0])
 
     def nn(self):
         xList = []
@@ -32,7 +31,7 @@ class tour:
 
         newX.append(xList[0])
         newY.append(yList[0])
-        print(xList, yList)
+        print(xList,yList)
         xList.pop(0)
         yList.pop(0)
 
@@ -40,7 +39,7 @@ class tour:
             distances = []
             for j in range(len(xList)):
                 '''find distances to each node'''
-                distances.append((tsplib95.distances.euclidean((newX[-1], newY[-1]), (xList[j], yList[j]))))
+                distances.append((tsplib95.distances.euclidean((newX[-1],newY[-1]),(xList[j],yList[j]))))
             lowest = distances.index(min(distances))
 
             newX.append(xList[lowest])
@@ -49,6 +48,7 @@ class tour:
             yList.pop(lowest)
             print(distances)
 
+
         for i in range(len(newX)):
             for j in range(self.problem.dimension):
                 if (self.problem.get_display(self.tour[j])[0]) == newX[i]:
@@ -56,82 +56,95 @@ class tour:
                         myTour.append(j+1)
 
         myTour.append(myTour[0])
-        self.tour=myTour
+        myTour.pop(0)
 
+
+        newY.append(newY[0])
+        newX.append(newX[0])
+
+        print(newX,newY)
+        plt.plot(newX,newY)
+        plt.scatter(newX,newY)
+        plt.show()
+
+
+
+        #print(myTour)
+        self.tour = myTour
 
     def retTour(self):
         return self.tour
 
-    def makeSwap(self,a,b):
-        temp = self.tour[a]
-        self.tour[b]=self.tour[a]
-        self.tour[a] = temp
+    def get_len(self):
+        return len(self.tour)
 
+    def makeSwap(self, a, b):
+        temp = self.tour[a]
+        self.tour[a] = self.tour[b]
+        self.tour[b] = temp
 
     def findPathLength(self):
         pathDistance = 0
-        for i in range(len(self.tour)-1):
-            pathDistance += self.problem.wfunc(self.tour[i],self.tour[i+1])
+        for i in range(len(self.tour) - 1):
+            pathDistance += self.problem.wfunc(self.tour[i], self.tour[i + 1])
         return pathDistance
 
+
 class annealing:
-    def __init__(self,prob):
+    def __init__(self, prob):
         self.problem = prob
         self.finalPath = None
 
-
-    def acceptProbability(self,t,e,ne):
+    def acceptProbability(self, t, e, ne):
         if ne < e:
             return 1
-        else:
-            return math.exp((e-ne)/t)
+
+        return math.exp(((e - ne)) / t)
 
     def retFinal(self):
         return self.finalPath
 
-
     def simulate(self):
-        t = 10000
-        cr = 0.001
+        t = 1000.0
+        cr = 0.000001
         currentTour = tour()
         currentTour.nn()
-        print(currentTour.findPathLength())
-        plot = Graph(currentTour.retTour())
-        plot.display_graph()
-
-
-
+        print(currentTour.retTour())
         self.currentBest = currentTour
-        #cooling
-        while t > 1:
-            newTour = tour()
 
-            touri = random.randint(0,(self.problem.dimension)-1)
-            tourj = 0
-            while tourj != touri:
-                tourj = random.randint(0,(self.problem.dimension)-1)
-            newTour.makeSwap(touri,tourj)
-            print(newTour.retTour())
+        # cooling
 
-            ce = currentTour.findPathLength()
-            ne = newTour.findPathLength()
+        while t > 0:
+            newtour = currentTour
+
+            touri = random.randint(0, (self.problem.dimension) - 1)
+            tourj = random.randint(0, (self.problem.dimension) - 1)
+            while tourj == touri:
+                tourj = random.randint(0, (self.problem.dimension) - 1)
+
+            print(touri,tourj)
+            newtour.makeSwap(touri, tourj)
+            print(newtour.retTour())
 
 
-            if self.acceptProbability(t,ce,ne) > random.uniform(0,1):
-                currentTour = newTour
 
-            if currentTour.findPathLength() < self.currentBest.findPathLength():
-                self.currentBest = currentTour
+            ce = self.currentBest.findPathLength()
+            ne = newtour.findPathLength()
+
+            if self.acceptProbability(t, ce, ne) > random.randint(0, 1):
+                self.currentBest = newtour
+
+            if newtour.findPathLength() < self.currentBest.findPathLength():
+                self.currentBest = newtour
                 print(self.currentBest.findPathLength())
-
-                plot=Graph(newTour.retTour())
+                plot = Graph(self.currentBest.retTour())
                 plot.display_graph()
 
-            t = t*(1-cr)
-            #print("temp",t)
+            t *= 1 - cr
+            #print("temp", t)
 
-        print("final length: ",self.currentBest.findPathLength())
 
+        print("final length: ", self.currentBest.findPathLength())
         self.finalPath = self.currentBest
 
 
@@ -146,19 +159,17 @@ class Graph:
             self.yList.append(prob.get_display(tour[i])[1])
 
     def display_graph(self):
-        plt.plot(self.xList, self.yList, 'black')
+        plt.plot(self.xList, self.yList)
         plt.scatter(self.xList, self.yList)
-        plt.xlabel('Node x Position')
-        plt.ylabel('Node y Position')
         plt.show()
 
 
-
 solution = annealing(prob)
-
 solution.simulate()
 
 # List of best tour
-solutionTour = solution.retFinal().retTour()
+#solutionTour = solution.retFinal().retTour()
 
 #print('Final Route: ', solutionTour)
+#plot = Graph(solutionTour)
+#plot.display_graph()

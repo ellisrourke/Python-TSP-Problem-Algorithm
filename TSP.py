@@ -59,21 +59,25 @@ class tspSolver():
             for j in range(self.problem.dimension):
                 if (self.problem.get_display(self.tour[j])[0]) == newX[i]:
                     if (self.problem.get_display(self.tour[j])[1]) == newY[i]:
-                        myTour.append(j)
+                        myTour.append(j+1)
 
         myTour.append(myTour[0])
 
 
         newY.append(newY[0])
         newX.append(newX[0])
+
         print(newX,newY)
         plt.plot(newX,newY)
         plt.scatter(newX,newY)
         plt.show()
 
 
+
+        #print(myTour)
         print(myTour)
-        print("path length found",self.findPathLength(newX,newY))
+        return myTour
+        #print("path length found",self.findPathLength(newX,newY))
 
 
 
