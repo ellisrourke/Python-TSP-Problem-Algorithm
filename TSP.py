@@ -7,7 +7,7 @@ import numpy
 
 class tspSolver():
     def __init__(self):
-        self.problem = tsplib.load_problem("files/berlin52.tsp", special="euclidean_2d_jitter")
+        self.problem = tsplib.load_problem("files/pr76.tsp", special="euclidean_2d_jitter")
         self.tour = list(range(1, self.problem.dimension + 1))
         self.shortestPathLength = 1000000
 

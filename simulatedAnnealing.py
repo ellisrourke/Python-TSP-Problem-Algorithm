@@ -6,13 +6,12 @@ from datetime import datetime
 import copy
 random.seed(datetime.now())
 
-prob = tsplib95.load_problem("files/a280.tsp")
-
+prob = tsplib95.load_problem("files/st70.tsp")
 class tour:
     def __init__(self):
-        self.problem = prob = tsplib95.load_problem("files/a280.tsp")
+        self.problem = prob = tsplib95.load_problem("files/st70.tsp")
         self.tour = list(range(1, self.problem.dimension + 1))
-        random.shuffle(self.tour)
+        #random.shuffle(self.tour)
         self.tour.append(self.tour[0])
 
     def nn(self):
@@ -104,32 +103,36 @@ class annealing:
         return self.finalPath
 
     def simulate(self):
-        t = 9999999999999999999999999999.0
-        cr = 0.0000000000000000000000000000003
+        t = 99999999999999999999999
+        cr = 0.00001
         currentTour = tour()
         print(currentTour.retTour())
         self.currentBest = currentTour
-        self.currentBest.nn()
+        #self.currentBest.nn()
+        plot = Graph(self.currentBest.retTour())
+        plot.display_graph()
 
         # cooling
         while t > 0:
             newtour = tour()
             newtour.tour = copy.deepcopy(self.currentBest.tour)
 
-            touri = random.randint(1, (self.problem.dimension) -2)
-            tourj = random.randint(1, (self.problem.dimension) -2)
+            touri = random.randint(1, (self.problem.dimension) -1)
+            tourj = random.randint(1, (self.problem.dimension) -1)
             while tourj == touri:
-                tourj = random.randint(1, (self.problem.dimension) -2)
+                tourj = random.randint(1, (self.problem.dimension) -1)
 
             #print(touri,tourj)
             newtour.makeSwap(touri, tourj)
             #print(newtour.retTour())
 
+
             ce = self.currentBest.findPathLength()
             ne = newtour.findPathLength()
 
-            if self.acceptProbability(t, ce, ne) > random.randint(0, 1):
-
+            ap = self.acceptProbability(t, ce, ne)
+            print(ap)
+            if ap > random.randint(0,1):
                 currentTour = newtour
                 #print(currentTour.retTour())
                 #plot = Graph(currentTour.retTour())
@@ -137,7 +140,7 @@ class annealing:
 
             if currentTour.findPathLength() < self.currentBest.findPathLength():
                 self.currentBest = currentTour
-                #print(self.currentBest.findPathLength())
+                print("Path length:",self.currentBest.findPathLength())
                 plot = Graph(self.currentBest.retTour())
                 plot.display_graph()
 
@@ -160,16 +163,18 @@ class Graph:
             self.yList.append(prob.get_display(tour[i])[1])
 
     def display_graph(self):
+        plt.close()
         plt.plot(self.xList, self.yList)
         plt.scatter(self.xList, self.yList)
         plt.show()
 
 
-solution = annealing(prob)
-solution.simulate()
+
+solve = annealing(prob)
+solve.simulate()
 
 # List of best tour
-solutionTour = solution.retFinal().retTour()
+solutionTour = solve.retFinal().retTour()
 
 #print('Final Route: ', solutionTour)
 #plot = Graph(solutionTour)
