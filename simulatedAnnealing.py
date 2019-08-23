@@ -4,18 +4,19 @@ import matplotlib.pyplot as plt
 import random
 import time
 import copy
+import sys
 
-maxtime = int(input('enter amount of time: '))
+maxtime = int(sys.argv[2])
 start_time = time.time()
+input = "files/"+sys.argv[1]
 
+prob = tsplib95.load_problem(input)
+print(input)
 
-
-prob = tsplib95.load_problem("files/st70.tsp")
 class tour:
     def __init__(self):
-        self.problem = prob = tsplib95.load_problem("files/st70.tsp")
+        self.problem = prob = tsplib95.load_problem(input)
         self.tour = list(range(1, self.problem.dimension + 1))
-        #random.shuffle(self.tour)
         self.tour.append(self.tour[0])
 
     def nn(self):
@@ -108,7 +109,7 @@ class annealing:
 
     def simulate(self):
         t = 1000000000000000000000000
-        cr = 0.00000000000000000000000000000000001
+        cr = 0.000000000000000000001
         currentTour = tour()
         print(currentTour.retTour())
         self.currentBest = currentTour
@@ -137,8 +138,8 @@ class annealing:
             if currentTour.findPathLength() < self.currentBest.findPathLength():
                 self.currentBest = currentTour
                 print("Path length:",self.currentBest.findPathLength())
-                plot = Graph(self.currentBest.retTour())
-                plot.display_graph()
+                #plot = Graph(self.currentBest.retTour())
+                #plot.display_graph()
 
             t *= 1 - cr
             #print("temp", t)
@@ -146,8 +147,11 @@ class annealing:
 
         print("final length: ", self.currentBest.findPathLength())
         self.finalPath = self.currentBest
-        plot = Graph(self.currentBest.retTour())
-        plot.display_graph()
+        for i in range(self.problem.dimension):
+            print(self.finalPath.retTour()[i])
+        print(-1)
+        #plot = Graph(self.currentBest.retTour())
+        #plot.display_graph()
 
 
 class Graph:
@@ -168,6 +172,8 @@ class Graph:
 
 
 
+
+print(sys.argv[1])
 solve = annealing(prob)
 solve.simulate()
 
