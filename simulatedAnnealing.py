@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import random
 import time
 import copy
+#database testing
 
 maxtime = int(input('enter amount of time: '))
 start_time = time.time()
