@@ -7,14 +7,14 @@ import sys
 import tsplib95
 
 
-maxtime = int(sys.argv[3])
+#maxtime = int(sys.argv[3])
 start_time = time.time()
 input = "files/"+sys.argv[1]
 prob = tsplib95.load_problem(input)
 
 class tour:
     def __init__(self):
-        self.problem = prob = tsplib95.load_problem(input)
+        self.problem =  tsplib95.load_problem(input)
         self.tour = list(range(1, self.problem.dimension + 1))
         self.tour.append(self.tour[0])
 
@@ -152,3 +152,4 @@ class Graph:
 def run():
     solve = annealing(prob)
     solve.simulate()
+problem = tsplib95.load_problem(input)
