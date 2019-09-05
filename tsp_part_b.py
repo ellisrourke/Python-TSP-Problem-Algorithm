@@ -1,6 +1,6 @@
 import mysql.connector
 import tsplib95
-#import tsp
+import tsp
 import sys
 
 connection = mysql.connector.connect(
@@ -37,9 +37,29 @@ if sys.argv[2] == "ADD":
         except:
             print("error inserting record")
     connection.commit()
-else if sys.argv[2] == "FETCH":
-    sql = "SELECT * from solution WHERE name == %s"
+elif sys.argv[2] == "FETCH":
+    sql = "SELECT * from solution WHERE problem = %s AND tourLength = (SELECT min(tourLength) FROM solution WHERE problem = %s)"
+    val = (sys.argv[1],sys.argv[1])
+    try:
+        mycursor.execute(sql,val)
+        ret = mycursor.fetchall()
+        print(ret)
+    except:
+        print("error finding record")
+    connection.commit()
+elif sys.argv[2] == "SOLVE":
+    data = tsp.run(sys.argv[3])
+    datastr = (str(data[1])).replace(",", "")
+    datastr = datastr.strip('[]')
+    print(datastr)
 
+    sql = "INSERT INTO solution (problem,tourLength,calculationTime,algorithm,tour,solvedBy) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (sys.argv[1],data[0],sys.argv[3],'simulatedAnnealing',datastr,'Ellis Rourke')
+    try:
+        mycursor.execute(sql, val)
+    except:
+        print("error occured")
+    connection.commit()
 
 #execfile('tsp.py')
 #tsp.run()

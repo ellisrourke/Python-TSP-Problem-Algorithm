@@ -7,10 +7,11 @@ import sys
 import tsplib95
 
 
-maxtime = int(sys.argv[3])
+
 start_time = time.time()
-input = "files/"+sys.argv[1]
+input = "files/"+sys.argv[1]+".tsp"
 prob = tsplib95.load_problem(input)
+results = []
 
 class tour:
     def __init__(self):
@@ -94,7 +95,7 @@ class annealing:
     def retFinal(self):
         return self.finalPath
 
-    def simulate(self):
+    def simulate(self,maxtime):
         t = 1000000000000000000000000
         cr = 0.000000000000000000001
         currentTour = tour()
@@ -128,10 +129,13 @@ class annealing:
 
         print("final length: ", self.currentBest.findPathLength())
         self.finalPath = self.currentBest
-        for i in range(self.problem.dimension):
-            print(self.finalPath.retTour()[i])
-        print(-1)
+        #self.finalPath.tour.append(-1)
+        #for i in range(self.problem.dimension+2):
+            #print(self.finalPath.retTour()[i])
 
+        results.append(self.finalPath.findPathLength())
+        self.finalPath.tour.append(-1)
+        results.append(self.finalPath.retTour())
 
 class Graph:
     def __init__(self, tour):
@@ -149,6 +153,7 @@ class Graph:
         plt.show()
 
 
-def run():
+def run(maxtime):
     solve = annealing(prob)
-    solve.simulate()
+    solve.simulate(int(maxtime))
+    return(results)
