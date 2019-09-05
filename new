@@ -1,0 +1,11 @@
+'''
+mycursor = connection.cursor()
+
+sql = "INSERT INTO test (name, sNumber) VALUES (%s, %s)"
+val = ("Felicity", "s000000")
+mycursor.execute(sql, val)
+
+connection.commit()
+
+print(mycursor.rowcount, "record inserted.")
+'''
