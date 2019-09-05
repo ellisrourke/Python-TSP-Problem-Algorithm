@@ -17,19 +17,28 @@ if sys.argv[2] == "ADD":
     tour = list(range(1,prob.dimension + 1))
     tour.append(tour[0])
     #print(prob.get_display(tour[0])[i])
-    '''
-    sql = "INSERT INTO problem (name, dimention, description) VALUES (%s, %s, %s)"
+
+    sql = "INSERT IGNORE INTO problem (name, dimention, description) VALUES (%s, %s, %s)";
+
+    #WHERE NOT EXISTS (SELECT name FROM problem WHERE name = %s)
     val = (sys.argv[1],prob.dimension,"NULL")
-    mycursor.execute(sql, val)
-    '''
+
+    try:
+        mycursor.execute(sql, val)
+    except:
+        print("error occured")
 #add all cities to city table
     for i in range(1,prob.dimension+1):
         sql = "INSERT INTO cities (name,ID, x, y) VALUES (%s, %s, %s, %s)"
         val = (sys.argv[1],i,prob.get_display(tour[i])[0],prob.get_display(tour[i])[1])
-        mycursor.execute(sql, val)
-
+        try:
+            mycursor.execute(sql, val)
+            #print("record inserted.")
+        except:
+            print("error inserting record")
     connection.commit()
-    print("record(s) inserted.")
+else if sys.argv[2] == "FETCH":
+    sql = "SELECT * from solution WHERE name == %s"
 
 
 #execfile('tsp.py')
