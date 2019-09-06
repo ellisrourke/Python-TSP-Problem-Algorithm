@@ -10,7 +10,7 @@ connection = mysql.connector.connect(
     database = 's5057468db'
 )
 mycursor = connection.cursor()
-prob = tsplib95.load_problem("files/"+sys.argv[1]+".tsp")
+prob = tsplib95.load_problem(sys.argv[1]+".tsp")
 
 if sys.argv[2] == "ADD":
 
@@ -53,8 +53,12 @@ elif sys.argv[2] == "FETCH":
     val = (sys.argv[1],sys.argv[1])
     try:
         mycursor.execute(sql,val)
-        ret = mycursor.fetchall()
-        print(ret)
+        ret = mycursor.fetchone()
+        print("\nProblem:",ret[1])
+        print("Tour Length:",ret[2])
+        print("Calculation Time:",ret[3])
+        print("Algorithm:",ret[4],"\n")
+
     except:
         print("error finding record")
     connection.commit()
@@ -68,26 +72,20 @@ elif sys.argv[2] == "SOLVE":
         mycursor.execute(sql,val)
         ret = mycursor.fetchall()
         #print(ret[2][2],ret[2][3])
+        sql = "SELECT dimention FROM problem WHERE name = %s"
+        val = (sys.argv[1],)
+        mycursor.execute(sql,val)
+        dim = mycursor.fetchone()
+        dim = dim[0]
+        #print(dim)
+
+        for i in range(0,dim):
+            x.append(ret[i][2])
+            y.append(ret[i][3])
     except:
-        print("error")
+        print("problem may not exist in database")
+        exit()
 
-    sql = "SELECT dimention FROM problem WHERE name = %s"
-    val = (sys.argv[1],)
-    mycursor.execute(sql,val)
-    dim = mycursor.fetchall()[0][0]
-    print(dim)
-
-
-    for i in range(0,dim):
-        print(i)
-        x.append(ret[i][2])
-        y.append(ret[i][3])
-
-    print(x)
-    print(y)
-
-    #for i in range(50):
-        #print(x[i],y[i])
     data = tsp.run(x,y,sys.argv[3],dim)
     #print(data[0],data[1])
 
