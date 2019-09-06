@@ -4,12 +4,9 @@ import random
 import time
 import copy
 import sys
-import tsplib95
-
 
 
 start_time = time.time()
-input = "files/"+sys.argv[1]+".tsp"
 results = []
 problemDimension = 51
 
@@ -21,7 +18,7 @@ class tour:
     def __init__(self,ax,ay):
         self.x = ax
         self.y = ay
-        self.tour = list(range(0, problemDimension-2))
+        self.tour = list(range(0, problemDimension))
         #makes 2 for run
         self.tour.append(self.tour[0])
 
@@ -35,7 +32,7 @@ class tour:
         newX = []
         newY = []
 
-        for i in range(0,problemDimension-1):
+        for i in range(0,len(self.tour)):
             #print(i)
             tourPos = self.tour[i]
             xList.append(self.x[tourPos])
@@ -88,18 +85,19 @@ class tour:
     def findPathLength(self,x,y):
         #print(x[50])
         pathDistance = 0
-        for i in range(0,len(self.tour)):
+        for i in range(0,len(self.tour)-1):
             tourPos = self.tour[i]
-            print(tourPos,i)
+            tourPos2 = self.tour[i+1]
+            #print(tourPos,i)
             #print(len(x),len(y))
             #print(x[tourPos],y[tourPos])
             #print(tourPos, i)
-            pathDistance += calculateDistance(x[tourPos],y[tourPos],x[tourPos+1],y[tourPos+1])
+            pathDistance += calculateDistance(x[tourPos],y[tourPos],x[tourPos2],y[tourPos2])
             #pathDistance = 0
 
             #pathDistance = 0
-        print(pathDistance)
-        #return pathDistance
+        #print(pathDistance)
+        return pathDistance
 
 class annealing:
     def __init__(self,thisx,thisy):
@@ -129,10 +127,10 @@ class annealing:
             newtour = tour(self.x,self.y)
             newtour.tour = copy.deepcopy(self.currentBest.tour)
 
-            touri = random.randint(0, (len(newtour.tour)) )
-            tourj = random.randint(0, (len(newtour.tour)) )
+            touri = random.randint(1, len(newtour.tour)-2)
+            tourj = random.randint(1, len(newtour.tour)-2)
             while tourj == touri:
-                tourj = random.randint(0, (problemDimension) )
+                tourj = random.randint(1, problemDimension-2)
 
             newtour.makeSwap(touri, tourj)
 
@@ -176,14 +174,14 @@ class Graph:
 
 
 def run(inX,inY,maxtime):
-    x = inX;
-    y = inY;
+    x = inX
+    y = inY
     #print(len(x))
     #print(len(y))
-    #x.append(x[0])
-    #y.append(y[0])
-    #print(x)
-    #print(y)
+    x.append(x[0])
+    y.append(y[0])
+    print(x)
+    print(y)
     #print(len(x),"len")
     solve = annealing(x,y)
     solve.simulate(int(maxtime),x,y)
