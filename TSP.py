@@ -22,6 +22,7 @@ class tour:
         self.x = ax
         self.y = ay
         self.tour = list(range(0, problemDimension-2))
+        #makes 2 for run
         self.tour.append(self.tour[0])
 
     def nn(self,x,y):
@@ -59,7 +60,7 @@ class tour:
 
 
         for i in range(len(newX)):
-            for j in range(problemDimension):
+            for j in range(problemDimension-2):
                 if (self.x[j]) == newX[i]:
                     if (self.y[j]) == newY[i]:
                         myTour.append(j+1)
@@ -87,12 +88,18 @@ class tour:
     def findPathLength(self,x,y):
         #print(x[50])
         pathDistance = 0
-        for i in range(0,problemDimension-2):
+        for i in range(0,len(self.tour)):
             tourPos = self.tour[i]
-            #print(i,tourPos)
-            #print(tourPos,i)
-            pathDistance += calculateDistance(self.x[tourPos],self.y[tourPos],self.x[tourPos+1],self.y[tourPos+1])
-        return pathDistance
+            print(tourPos,i)
+            #print(len(x),len(y))
+            #print(x[tourPos],y[tourPos])
+            #print(tourPos, i)
+            pathDistance += calculateDistance(x[tourPos],y[tourPos],x[tourPos+1],y[tourPos+1])
+            #pathDistance = 0
+
+            #pathDistance = 0
+        print(pathDistance)
+        #return pathDistance
 
 class annealing:
     def __init__(self,thisx,thisy):
@@ -122,10 +129,10 @@ class annealing:
             newtour = tour(self.x,self.y)
             newtour.tour = copy.deepcopy(self.currentBest.tour)
 
-            touri = random.randint(0, (problemDimension) -2)
-            tourj = random.randint(0, (problemDimension) -2)
+            touri = random.randint(0, (len(newtour.tour)) )
+            tourj = random.randint(0, (len(newtour.tour)) )
             while tourj == touri:
-                tourj = random.randint(0, (problemDimension) -2)
+                tourj = random.randint(0, (problemDimension) )
 
             newtour.makeSwap(touri, tourj)
 
@@ -171,13 +178,14 @@ class Graph:
 def run(inX,inY,maxtime):
     x = inX;
     y = inY;
-    data = tour(x,y)
-    dataX = []
-    dataY = []
     #print(len(x))
     #print(len(y))
-    print(len(x),"len")
+    #x.append(x[0])
+    #y.append(y[0])
+    #print(x)
+    #print(y)
+    #print(len(x),"len")
     solve = annealing(x,y)
     solve.simulate(int(maxtime),x,y)
-    print(results)
+    #print(results)
     return(results)
