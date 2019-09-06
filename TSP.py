@@ -8,7 +8,21 @@ import sys
 
 start_time = time.time()
 results = []
-problemDimension = 51
+problemDimension = 0
+
+def run(inX,inY,maxtime,dimention):
+    global problemDimension
+    problemDimension = dimention
+    x = inX
+    y = inY
+    x.append(x[0])
+    y.append(y[0])
+    #print(len(x),"len")
+    solve = annealing(x,y)
+    solve.simulate(int(maxtime),x,y)
+    #print(results)
+    return(results)
+
 
 def calculateDistance(x1,y1,x2,y2):
      dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
@@ -16,13 +30,15 @@ def calculateDistance(x1,y1,x2,y2):
 
 class tour:
     def __init__(self,ax,ay):
+        global problemDimension
         self.x = ax
         self.y = ay
-        self.tour = list(range(0, problemDimension))
+        self.tour = list(range(0,problemDimension))
         #makes 2 for run
         self.tour.append(self.tour[0])
 
     def nn(self,x,y):
+        problemDimension
         xList = []
         yList = []
 
@@ -147,7 +163,7 @@ class annealing:
             t *= 1 - cr
 
 
-        print("final length: ", self.currentBest.findPathLength(self.x,self.y))
+        #print("final length: ", self.currentBest.findPathLength(self.x,self.y))
         self.finalPath = self.currentBest
         #self.finalPath.tour.append(-1)
         #for i in range(self.problem.dimension+2):
@@ -170,20 +186,3 @@ class Graph:
         plt.plot(self.xList, self.yList)
         plt.scatter(self.xList, self.yList)
         plt.show()
-
-
-
-def run(inX,inY,maxtime):
-    x = inX
-    y = inY
-    #print(len(x))
-    #print(len(y))
-    x.append(x[0])
-    y.append(y[0])
-    print(x)
-    print(y)
-    #print(len(x),"len")
-    solve = annealing(x,y)
-    solve.simulate(int(maxtime),x,y)
-    #print(results)
-    return(results)
