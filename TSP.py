@@ -10,16 +10,21 @@ import tsplib95
 
 start_time = time.time()
 input = "files/"+sys.argv[1]+".tsp"
-prob = tsplib95.load_problem(input)
 results = []
+problemDimension = 51
+
+def calculateDistance(x1,y1,x2,y2):
+     dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+     return dist
 
 class tour:
-    def __init__(self):
-        self.problem = prob = tsplib95.load_problem(input)
-        self.tour = list(range(1, self.problem.dimension + 1))
+    def __init__(self,ax,ay):
+        self.x = ax
+        self.y = ay
+        self.tour = list(range(0, problemDimension-2))
         self.tour.append(self.tour[0])
 
-    def nn(self):
+    def nn(self,x,y):
         xList = []
         yList = []
 
@@ -29,9 +34,11 @@ class tour:
         newX = []
         newY = []
 
-        for i in range(0, len(self.tour)):
-            xList.append(self.problem.get_display(self.tour[i])[0])
-            yList.append(self.problem.get_display(self.tour[i])[1])
+        for i in range(0,problemDimension-1):
+            #print(i)
+            tourPos = self.tour[i]
+            xList.append(self.x[tourPos])
+            yList.append(self.y[tourPos])
 
         newX.append(xList[0])
         newY.append(yList[0])
@@ -41,7 +48,8 @@ class tour:
         for i in range(len(xList)):
             distances = []
             for j in range(len(xList)):
-                distances.append((tsplib95.distances.euclidean((newX[-1],newY[-1]),(xList[j],yList[j]))))
+                distances.append(calculateDistance(newX[-1],newY[-1],xList[j],yList[j]))
+                #distances.append((tsplib95.distances.euclidean((newX[-1],newY[-1]),(xList[j],yList[j]))))
             lowest = distances.index(min(distances))
 
             newX.append(xList[lowest])
@@ -51,9 +59,9 @@ class tour:
 
 
         for i in range(len(newX)):
-            for j in range(self.problem.dimension):
-                if (self.problem.get_display(self.tour[j])[0]) == newX[i]:
-                    if (self.problem.get_display(self.tour[j])[1]) == newY[i]:
+            for j in range(problemDimension):
+                if (self.x[j]) == newX[i]:
+                    if (self.y[j]) == newY[i]:
                         myTour.append(j+1)
 
         myTour.append(myTour[0])
@@ -71,20 +79,25 @@ class tour:
         return len(self.tour)
 
     def makeSwap(self, a, b):
+        #print(a,b)
         temp = self.tour[a]
         self.tour[a] = self.tour[b]
         self.tour[b] = temp
 
-    def findPathLength(self):
+    def findPathLength(self,x,y):
+        #print(x[50])
         pathDistance = 0
-        for i in range(len(self.tour) - 1):
-            pathDistance += self.problem.wfunc(self.tour[i], self.tour[i + 1])
+        for i in range(0,problemDimension-2):
+            tourPos = self.tour[i]
+            #print(i,tourPos)
+            #print(tourPos,i)
+            pathDistance += calculateDistance(self.x[tourPos],self.y[tourPos],self.x[tourPos+1],self.y[tourPos+1])
         return pathDistance
 
-
 class annealing:
-    def __init__(self, prob):
-        self.problem = prob
+    def __init__(self,thisx,thisy):
+        self.x = thisx
+        self.y = thisy
         self.finalPath = None
 
     def acceptProbability(self, t, e, ne):
@@ -95,48 +108,49 @@ class annealing:
     def retFinal(self):
         return self.finalPath
 
-    def simulate(self,maxtime):
+    def simulate(self,maxtime,x,y):
+        self.x = x
+        self.y = y
         t = 1000000000000000000000000
         cr = 0.000000000000000000001
-        currentTour = tour()
+        currentTour = tour(self.x,self.y)
         self.currentBest = currentTour
-        self.currentBest.nn()
+        self.currentBest.nn(self.x,self.y)
 
         # cooling
         while t > 0 and (time.time() - start_time)<maxtime:
-            newtour = tour()
+            newtour = tour(self.x,self.y)
             newtour.tour = copy.deepcopy(self.currentBest.tour)
 
-            touri = random.randint(1, (self.problem.dimension) -1)
-            tourj = random.randint(1, (self.problem.dimension) -1)
+            touri = random.randint(0, (problemDimension) -2)
+            tourj = random.randint(0, (problemDimension) -2)
             while tourj == touri:
-                tourj = random.randint(1, (self.problem.dimension) -1)
+                tourj = random.randint(0, (problemDimension) -2)
 
             newtour.makeSwap(touri, tourj)
 
-            ce = self.currentBest.findPathLength()
-            ne = newtour.findPathLength()
+            ce = self.currentBest.findPathLength(self.x,self.y)
+            ne = newtour.findPathLength(self.x,self.y)
 
             if self.acceptProbability(t, ce, ne) > random.uniform(0,1):
                 currentTour = newtour
 
-            if currentTour.findPathLength() < self.currentBest.findPathLength():
+            if currentTour.findPathLength(self.x,self.y) < self.currentBest.findPathLength(self.x,self.y):
                 self.currentBest = currentTour
-                print("Path length:",self.currentBest.findPathLength())
+                print("Path length:",self.currentBest.findPathLength(self.x,self.y))
 
             t *= 1 - cr
 
 
-        print("final length: ", self.currentBest.findPathLength())
+        print("final length: ", self.currentBest.findPathLength(self.x,self.y))
         self.finalPath = self.currentBest
         #self.finalPath.tour.append(-1)
         #for i in range(self.problem.dimension+2):
             #print(self.finalPath.retTour()[i])
 
-        results.append(self.finalPath.findPathLength())
+        results.append(self.finalPath.findPathLength(self.x,self.y))
         self.finalPath.tour.append(-1)
         results.append(self.finalPath.retTour())
-
 class Graph:
     def __init__(self, tour):
         self.xList = []
@@ -153,7 +167,17 @@ class Graph:
         plt.show()
 
 
-def run(maxtime):
-    solve = annealing(prob)
-    solve.simulate(int(maxtime))
+
+def run(inX,inY,maxtime):
+    x = inX;
+    y = inY;
+    data = tour(x,y)
+    dataX = []
+    dataY = []
+    #print(len(x))
+    #print(len(y))
+    print(len(x),"len")
+    solve = annealing(x,y)
+    solve.simulate(int(maxtime),x,y)
+    print(results)
     return(results)

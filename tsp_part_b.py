@@ -12,31 +12,39 @@ connection = mysql.connector.connect(
 mycursor = connection.cursor()
 prob = tsplib95.load_problem("files/"+sys.argv[1]+".tsp")
 
-
 if sys.argv[2] == "ADD":
-    tour = list(range(1,prob.dimension + 1))
-    tour.append(tour[0])
+    tour = list(range(0,52))
+
     #print(prob.get_display(tour[0])[i])
 
     sql = "INSERT IGNORE INTO problem (name, dimention, description) VALUES (%s, %s, %s)";
 
     #WHERE NOT EXISTS (SELECT name FROM problem WHERE name = %s)
-    val = (sys.argv[1],prob.dimension,"NULL")
-
+    val = (sys.argv[1],51,"NULL")
     try:
         mycursor.execute(sql, val)
     except:
         print("error occured")
+
+
+
 #add all cities to city table
-    for i in range(1,prob.dimension+1):
+    for i in range(1,52):
         sql = "INSERT INTO cities (name,ID, x, y) VALUES (%s, %s, %s, %s)"
-        val = (sys.argv[1],i,prob.get_display(tour[i])[0],prob.get_display(tour[i])[1])
+        val = (sys.argv[1],i,(prob.get_display(tour[i])[0]),(prob.get_display(tour[i])[1]))
         try:
             mycursor.execute(sql, val)
-            #print("record inserted.")
+            print("record inserted.")
         except:
             print("error inserting record")
     connection.commit()
+
+
+
+
+
+
+
 elif sys.argv[2] == "FETCH":
     sql = "SELECT * from solution WHERE problem = %s AND tourLength = (SELECT min(tourLength) FROM solution WHERE problem = %s)"
     val = (sys.argv[1],sys.argv[1])
@@ -48,18 +56,41 @@ elif sys.argv[2] == "FETCH":
         print("error finding record")
     connection.commit()
 elif sys.argv[2] == "SOLVE":
-    data = tsp.run(sys.argv[3])
-    datastr = (str(data[1])).replace(",", "")
-    datastr = datastr.strip('[]')
-    print(datastr)
-
-    sql = "INSERT INTO solution (problem,tourLength,calculationTime,algorithm,tour,solvedBy) VALUES (%s, %s, %s, %s, %s, %s)"
-    val = (sys.argv[1],data[0],sys.argv[3],'simulatedAnnealing',datastr,'Ellis Rourke')
+    x = []
+    y = []
+    sql = "SELECT * from cities WHERE name = 'eil51'"
+    val = (sys.argv[1])
+    print(val)
     try:
-        mycursor.execute(sql, val)
+        mycursor.execute(sql)
+        ret = mycursor.fetchall()
+        #print(ret[2][2],ret[2][3])
     except:
-        print("error occured")
-    connection.commit()
+        print("error")
+    for i in range(0,51):
+        x.append(ret[i][2])
+        y.append(ret[i][3])
+
+    print(x)
+    print(y)
+
+    #for i in range(50):
+        #print(x[i],y[i])
+
+    data = tsp.run(x,y,sys.argv[3])
+'''
+datastr = (str(data[1])).replace(",", "")
+datastr = datastr.strip('[]')
+print(datastr)
+
+sql = "INSERT INTO solution (problem,tourLength,calculationTime,algorithm,tour,solvedBy) VALUES (%s, %s, %s, %s, %s, %s)"
+val = (sys.argv[1],data[0],sys.argv[3],'simulatedAnnealing',datastr,'Ellis Rourke')
+try:
+    mycursor.execute(sql, val)
+except:
+    print("error occured")
+connection.commit()
+'''
 
 #execfile('tsp.py')
 #tsp.run()
