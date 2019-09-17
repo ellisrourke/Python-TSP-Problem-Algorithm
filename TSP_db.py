@@ -1,7 +1,6 @@
-import mysql.connector
-import tsplib95
-import tsp
 import sys
+import mysql.connector
+import TSP
 
 connection = mysql.connector.connect(
     host = 'mysql.ict.griffith.edu.au',
@@ -10,36 +9,40 @@ connection = mysql.connector.connect(
     database = 's5057468db'
 )
 mycursor = connection.cursor()
-prob = tsplib95.load_problem(sys.argv[1]+".tsp")
+prob = sys.argv[1]+".tsp"
+print(prob)
 
 if sys.argv[2] == "ADD":
+    import tsplib95
 
-    dim = prob.dimension
+    problem = tsplib95.load_problem(prob)
+    dim = problem.dimension
     print(dim)
     tour = list(range(0,dim+1))
 
     #print(prob.get_display(tour[0])[i])
 
-    sql = "INSERT IGNORE INTO problem (name, dimention, description) VALUES (%s, %s, %s)";
+    sql = "INSERT IGNORE INTO problem (name, dimention, description) VALUES (%s, %s, %s)"
 
-    #WHERE NOT EXISTS (SELECT name FROM problem WHERE name = %s)
     val = (sys.argv[1],dim,"NULL")
     try:
         mycursor.execute(sql, val)
     except:
-        print("error occured")
+        print("Problem already exists in database")
+        exit()
 
 
 
 #add all cities to city table
     for i in range(1,dim+1):
         sql = "INSERT INTO cities (name,ID, x, y) VALUES (%s, %s, %s, %s)"
-        val = (sys.argv[1],i,(prob.get_display(tour[i])[0]),(prob.get_display(tour[i])[1]))
+        val = (sys.argv[1],i,(problem.get_display(tour[i])[0]),(problem.get_display(tour[i])[1]))
         try:
             mycursor.execute(sql, val)
             print("record inserted.")
         except:
-            print("error inserting record")
+            print("Problem already exists in database")
+            break
     connection.commit()
 
 
@@ -86,7 +89,7 @@ elif sys.argv[2] == "SOLVE":
         print("problem may not exist in database")
         exit()
 
-    data = tsp.run(x,y,sys.argv[3],dim)
+    data = TSP.run(x,y,sys.argv[3],dim)
     #print(data[0],data[1])
 
     datastr = (str(data[1])).replace(",", "")

@@ -1,5 +1,5 @@
 import math
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import random
 import time
 import copy
@@ -173,6 +173,7 @@ class annealing:
         self.finalPath.tour.append(-1)
         results.append(self.finalPath.retTour())
 class Graph:
+    '''
     def __init__(self, tour):
         self.xList = []
         self.yList = []
@@ -186,3 +187,4 @@ class Graph:
         plt.plot(self.xList, self.yList)
         plt.scatter(self.xList, self.yList)
         plt.show()
+    '''
