@@ -1,15 +1,27 @@
+import TSP_db
 import math
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import random
 import time
 import copy
 import sys
+import tkinter
+plt.ion()
 
+from matplotlib import style
+style.use('fivethirtyeight')
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+m=tkinter.Tk()
+figure = plt.Figure( figsize=(4, 4))
+ax = figure.add_subplot(111)
+chart_type = FigureCanvasTkAgg(figure, m)
+chart_type.get_tk_widget().pack()
 
 start_time = time.time()
 results = []
 problemDimension = 0
 
+'''
 def run(inX,inY,maxtime,dimention):
     global problemDimension
     problemDimension = dimention
@@ -22,7 +34,7 @@ def run(inX,inY,maxtime,dimention):
     solve.simulate(int(maxtime),x,y)
     #print(results)
     return(results)
-
+'''
 
 def calculateDistance(x1,y1,x2,y2):
      dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
@@ -172,6 +184,7 @@ class annealing:
         results.append(self.finalPath.findPathLength(self.x,self.y))
         self.finalPath.tour.append(-1)
         results.append(self.finalPath.retTour())
+
 class Graph:
     '''
     def __init__(self, tour):
@@ -188,3 +201,38 @@ class Graph:
         plt.scatter(self.xList, self.yList)
         plt.show()
     '''
+
+def showProblem():
+    prob = problemName.get()
+    data = TSP_db.getCities(prob)
+    ax.clear()
+    ax.scatter(data[0],data[1])
+    figure.canvas.draw()
+    figure.canvas.flush_events()
+
+ax.plot()
+plt.show()
+
+problemNamePrompt = tkinter.Label(m,text="Enter problem name",padx=10)
+problemName = tkinter.Entry(m)
+problemNamePrompt.pack(side = tkinter.LEFT)
+problemName.pack(side = tkinter.LEFT)
+
+addProbFrame = tkinter.Frame(m, pady=10,padx=10)
+fetchSolutionFrame = tkinter.Frame(m, pady=10,padx=10)
+solveProblemFrame = tkinter.Frame(m, pady=10,padx=10)
+addProbFrame.pack(side = tkinter.LEFT)
+fetchSolutionFrame.pack(side = tkinter.LEFT)
+solveProblemFrame.pack(side = tkinter.LEFT)
+
+addProb_title = tkinter.Label(addProbFrame,text="Add a problem to the database")
+addProb_btn = tkinter.Button(addProbFrame,text="Add to database")
+addProb_title.pack( side = tkinter.TOP,pady = 10)
+addProb_btn.pack( side = tkinter.TOP ,pady = 10)
+
+fetchSolution_title = tkinter.Label(fetchSolutionFrame,text="Fetch the best solution from the database")
+fetchSolution_btn = tkinter.Button(fetchSolutionFrame,text="Fetch",command=showProblem)
+fetchSolution_title.pack( side = tkinter.TOP,pady = 10)
+fetchSolution_btn.pack( side = tkinter.TOP ,pady = 10)
+
+m.mainloop()

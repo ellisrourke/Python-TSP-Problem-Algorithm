@@ -1,6 +1,6 @@
 import sys
 import mysql.connector
-import TSP
+#import TSP
 
 connection = mysql.connector.connect(
     host = 'mysql.ict.griffith.edu.au',
@@ -8,30 +8,24 @@ connection = mysql.connector.connect(
     password = 'ZXGvz7ra',
     database = 's5057468db'
 )
+
 mycursor = connection.cursor()
-prob = sys.argv[1]+".tsp"
-print(prob)
 
-if sys.argv[2] == "ADD":
+
+def add(prob):
     import tsplib95
-
     problem = tsplib95.load_problem(prob)
     dim = problem.dimension
     print(dim)
     tour = list(range(0,dim+1))
-
     #print(prob.get_display(tour[0])[i])
-
     sql = "INSERT IGNORE INTO problem (name, dimention, description) VALUES (%s, %s, %s)"
-
     val = (sys.argv[1],dim,"NULL")
     try:
         mycursor.execute(sql, val)
     except:
         print("Problem already exists in database")
         exit()
-
-
 
 #add all cities to city table
     for i in range(1,dim+1):
@@ -45,15 +39,9 @@ if sys.argv[2] == "ADD":
             break
     connection.commit()
 
-
-
-
-
-
-
-elif sys.argv[2] == "FETCH":
+def fetch(problem):
     sql = "SELECT * from solution WHERE problem = %s AND tourLength = (SELECT min(tourLength) FROM solution WHERE problem = %s)"
-    val = (sys.argv[1],sys.argv[1])
+    val = (problem,problem)
     try:
         mycursor.execute(sql,val)
         ret = mycursor.fetchone()
@@ -65,11 +53,13 @@ elif sys.argv[2] == "FETCH":
     except:
         print("error finding record")
     connection.commit()
-elif sys.argv[2] == "SOLVE":
+
+'''
+def solve(problem):
     x = []
     y = []
     sql = """SELECT * from cities WHERE name = %s"""
-    val = (sys.argv[1],)
+    val = (problem,)
 
     try:
         mycursor.execute(sql,val)
@@ -80,7 +70,7 @@ elif sys.argv[2] == "SOLVE":
         mycursor.execute(sql,val)
         dim = mycursor.fetchone()
         dim = dim[0]
-        #print(dim)
+        print(dim)
 
         for i in range(0,dim):
             x.append(ret[i][2])
@@ -104,11 +94,33 @@ elif sys.argv[2] == "SOLVE":
     except:
         print("error occured")
     connection.commit()
+'''
 
+def getCities(problem):
+    print(problem)
+    x = []
+    y = []
+    sql = """SELECT * from cities WHERE name = %s"""
+    val = problem
 
-#execfile('tsp.py')
-#tsp.run()
+    try:
+            mycursor.execute(sql,val)
+            ret = mycursor.fetchall()
 
-#if sys.argv[2] == FETCH; get the best known solution from the database  python3 TSP_db.py a280 FETCH
-#if sys.argv[2] == ADD; add a new problem to the database > python3 TSP_db.py a280 ADD a280.tsp
-#is sys.argv[2] == SOLVE; solve the given problem > python3 TSP_db.py a280 SOLVE 300
+            #print(ret[2][2],ret[2][3])
+            sql = "SELECT dimention FROM problem WHERE name = %s"
+            val = problem
+            mycursor.execute(sql,val)
+            dim = mycursor.fetchone()
+            dim = dim[0]
+            print(dim)
+
+            for i in range(0,dim):
+                x.append(ret[i][2])
+                y.append(ret[i][3])
+
+            return (x, y)
+
+    except:
+            print("problem may not exist in database")
+
