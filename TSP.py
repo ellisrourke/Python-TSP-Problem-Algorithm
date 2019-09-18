@@ -24,7 +24,6 @@ problemDimension = 0
 sa = tkinter.IntVar()
 nn = tkinter.IntVar()
 
-
 def run():
     global problemDimension
     data = TSP_db.getCities(problemName.get())
@@ -35,7 +34,7 @@ def run():
     y.append(y[0])
     #print(len(x),"len")
     solve = annealing(x,y)
-    solve.simulate(10,x,y)
+    solve.simulate(30,x,y)
 
 
 def calculateDistance(x1,y1,x2,y2):
@@ -50,6 +49,12 @@ class tour:
         self.tour = list(range(0,problemDimension))
         #makes 2 for run
         self.tour.append(self.tour[0])
+
+    def getX(self):
+        return self.x
+
+    def getY(self):
+        return self.y
 
     def nn(self,x,y):
         xList = []
@@ -98,9 +103,7 @@ class tour:
         newY.append(newY[0])
         newX.append(newX[0])
         self.tour = myTour
-
-    def retTour(self):
-        return self.tour
+        update(newX,newY)
 
     def get_len(self):
         return len(self.tour)
@@ -110,6 +113,17 @@ class tour:
         temp = self.tour[a]
         self.tour[a] = self.tour[b]
         self.tour[b] = temp
+
+    def retTour(self,x,y):
+        newX,newY = [],[]
+        for i in range(0,len(self.tour)-1):
+            tourPos = self.tour[i]
+            newX.append(x[tourPos])
+            newY.append(y[tourPos])
+
+        newX.append(newX[0])
+        newY.append(newY[0])
+        return (newX,newY)
 
     def findPathLength(self,x,y):
         #print(x[50])
@@ -139,9 +153,6 @@ class annealing:
             return 1
         return math.exp((e - ne) / t)
 
-    def retFinal(self):
-        return self.finalPath
-
     def simulate(self,maxtime,x,y):
         self.x = x
         self.y = y
@@ -151,6 +162,7 @@ class annealing:
         self.currentBest = currentTour
         self.currentBest.nn(self.x,self.y)
         # cooling
+
         while t > 0 and (time.time() - start_time)<maxtime:
             newtour = tour(self.x,self.y)
             newtour.tour = copy.deepcopy(self.currentBest.tour)
@@ -161,7 +173,6 @@ class annealing:
                 tourj = random.randint(1, problemDimension-2)
 
             newtour.makeSwap(touri, tourj)
-
             ce = self.currentBest.findPathLength(self.x,self.y)
             ne = newtour.findPathLength(self.x,self.y)
 
@@ -170,8 +181,10 @@ class annealing:
 
             if currentTour.findPathLength(self.x,self.y) < self.currentBest.findPathLength(self.x,self.y):
                 self.currentBest = currentTour
-                update(self.currentBest.x,self.currentBest.y)
+                data = self.currentBest.retTour(x,y)
+                update(data[0],data[1])
                 #print("Path length:",self.currentBest.findPathLength(self.x,self.y))
+                #print(self.currentBest.x)
 
             t *= 1 - cr
 
@@ -182,9 +195,8 @@ class annealing:
         #for i in range(self.problem.dimension+2):
             #print(self.finalPath.retTour()[i])
 
-        results.append(self.finalPath.findPathLength(self.x,self.y))
         self.finalPath.tour.append(-1)
-        results.append(self.finalPath.retTour())
+
 
 class Graph:
     '''
@@ -203,9 +215,11 @@ class Graph:
         plt.show()
     '''
 
-def update(x,y):
+def update(x,y,plotBool=1):
+    print("update called")
     ax.clear()
-    ax.plot(x,y)
+    if plotBool == 1:
+        ax.plot(x,y)
     ax.scatter(x,y)
     figure.canvas.draw()
     figure.canvas.flush_events()
@@ -213,7 +227,7 @@ def update(x,y):
 def showProblem():
     try:
         data = TSP_db.getCities(problemName.get())
-        update(data[0],data[1])
+        update(data[0],data[1],0)
     except:
         messagebox.showerror("Error","problem may not exist in database")
 
@@ -250,7 +264,6 @@ fetchSolution_title.pack( side = tkinter.TOP,pady = 10)
 fetchSolution_btn.pack( side = tkinter.TOP ,pady = 10)
 
 #add and pack solveProblem buttons
-new = 0
 solveProblem_title = tkinter.Label(solveProblemFrame,text="Solve problem")
 solveProblem_btn = tkinter.Button(solveProblemFrame,text="Solve",command=run)
 nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn)
