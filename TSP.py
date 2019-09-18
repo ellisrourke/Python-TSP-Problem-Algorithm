@@ -25,6 +25,7 @@ sa = tkinter.IntVar()
 nn = tkinter.IntVar()
 
 def run():
+
     global problemDimension
     data = TSP_db.getCities(problemName.get())
     problemDimension = data[2]
@@ -34,7 +35,8 @@ def run():
     y.append(y[0])
     #print(len(x),"len")
     solve = annealing(x,y)
-    solve.simulate(30,x,y)
+    solve.simulate(x,y,int(solveProblem_timeAllowed.get()))
+
 
 
 def calculateDistance(x1,y1,x2,y2):
@@ -103,7 +105,7 @@ class tour:
         newY.append(newY[0])
         newX.append(newX[0])
         self.tour = myTour
-        update(newX,newY)
+
 
     def get_len(self):
         return len(self.tour)
@@ -153,14 +155,14 @@ class annealing:
             return 1
         return math.exp((e - ne) / t)
 
-    def simulate(self,maxtime,x,y):
+    def simulate(self,x,y,maxtime=20):
         self.x = x
         self.y = y
-        t = 1000000000000000000000000
-        cr = 0.000000000000000000001
+        t = 10000000
+        cr = 0.0000001
         currentTour = tour(self.x,self.y)
         self.currentBest = currentTour
-        self.currentBest.nn(self.x,self.y)
+        #self.currentBest.nn(self.x,self.y)
         # cooling
 
         while t > 0 and (time.time() - start_time)<maxtime:
@@ -183,6 +185,7 @@ class annealing:
                 self.currentBest = currentTour
                 data = self.currentBest.retTour(x,y)
                 update(data[0],data[1])
+                solveProblem_currentLength.config(text=self.currentBest.findPathLength(self.x,self.y))
                 #print("Path length:",self.currentBest.findPathLength(self.x,self.y))
                 #print(self.currentBest.x)
 
@@ -197,26 +200,7 @@ class annealing:
 
         self.finalPath.tour.append(-1)
 
-
-class Graph:
-    '''
-    def __init__(self, tour):
-        self.xList = []
-        self.yList = []
-        # Populate axes
-        for i in range(0, len(tour)):
-            self.xList.append(prob.get_display(tour[i])[0])
-            self.yList.append(prob.get_display(tour[i])[1])
-
-    def display_graph(self):
-        plt.close()
-        plt.plot(self.xList, self.yList)
-        plt.scatter(self.xList, self.yList)
-        plt.show()
-    '''
-
 def update(x,y,plotBool=1):
-    print("update called")
     ax.clear()
     if plotBool == 1:
         ax.plot(x,y)
@@ -259,19 +243,21 @@ addProb_btn.pack( side = tkinter.TOP ,pady = 10)
 
 #add and pack fetchSolution buttons
 fetchSolution_title = tkinter.Label(fetchSolutionFrame,text="Fetch the best solution from the database")
-fetchSolution_btn = tkinter.Button(fetchSolutionFrame,text="Fetch",command=showProblem)
 fetchSolution_title.pack( side = tkinter.TOP,pady = 10)
-fetchSolution_btn.pack( side = tkinter.TOP ,pady = 10)
 
 #add and pack solveProblem buttons
-solveProblem_title = tkinter.Label(solveProblemFrame,text="Solve problem")
-solveProblem_btn = tkinter.Button(solveProblemFrame,text="Solve",command=run)
-nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn)
-sa_option = tkinter.Checkbutton(solveProblemFrame, text="Simulated Annealing",variable=sa)
-solveProblem_title.pack( side = tkinter.TOP,pady = 5)
-nn_option.pack()
-sa_option.pack()
-solveProblem_btn.pack( side = tkinter.TOP ,pady = 10)
+solveProblem_title = tkinter.Label(solveProblemFrame,text="Solve problem").pack(side = tkinter.TOP,pady = 5)
+solveProblem_plotPoints = tkinter.Button(solveProblemFrame,text="plot cities",command=showProblem).pack()
+
+solveProblem_timeAllowedLabel = tkinter.Label(solveProblemFrame,text="time allowed").pack()
+solveProblem_timeAllowed = tkinter.Entry(solveProblemFrame)
+solveProblem_timeAllowed.pack()
+nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn).pack(pady=10)
+sa_option = tkinter.Checkbutton(solveProblemFrame, text="Simulated Annealing",variable=sa).pack()
+solveProblem_btn = tkinter.Button(solveProblemFrame,text="Solve",command=run).pack(side = tkinter.TOP ,pady = 10)
+solveProblem_currentLength_title = tkinter.Label(solveProblemFrame,text="Current path Length").pack()
+solveProblem_currentLength = tkinter.Label(solveProblemFrame,text="NULL")
+solveProblem_currentLength.pack()
 
 plt.show()
 m.mainloop()
