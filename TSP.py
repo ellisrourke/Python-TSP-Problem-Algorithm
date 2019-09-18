@@ -6,13 +6,14 @@ import time
 import copy
 import sys
 import tkinter
+from tkinter import messagebox
 plt.ion()
 
 from matplotlib import style
 style.use('fivethirtyeight')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 m=tkinter.Tk()
-figure = plt.Figure( figsize=(4, 4))
+figure = plt.Figure( figsize=(5, 5) )
 ax = figure.add_subplot(111)
 chart_type = FigureCanvasTkAgg(figure, m)
 chart_type.get_tk_widget().pack()
@@ -20,21 +21,22 @@ chart_type.get_tk_widget().pack()
 start_time = time.time()
 results = []
 problemDimension = 0
+sa = tkinter.IntVar()
+nn = tkinter.IntVar()
 
-'''
-def run(inX,inY,maxtime,dimention):
+
+def run():
     global problemDimension
-    problemDimension = dimention
-    x = inX
-    y = inY
+    data = TSP_db.getCities(problemName.get())
+    problemDimension = data[2]
+    x = data[0]
+    y = data[1]
     x.append(x[0])
     y.append(y[0])
     #print(len(x),"len")
     solve = annealing(x,y)
-    solve.simulate(int(maxtime),x,y)
-    #print(results)
-    return(results)
-'''
+    solve.simulate(10,x,y)
+
 
 def calculateDistance(x1,y1,x2,y2):
      dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
@@ -50,7 +52,6 @@ class tour:
         self.tour.append(self.tour[0])
 
     def nn(self,x,y):
-        problemDimension
         xList = []
         yList = []
 
@@ -149,7 +150,6 @@ class annealing:
         currentTour = tour(self.x,self.y)
         self.currentBest = currentTour
         self.currentBest.nn(self.x,self.y)
-
         # cooling
         while t > 0 and (time.time() - start_time)<maxtime:
             newtour = tour(self.x,self.y)
@@ -170,7 +170,8 @@ class annealing:
 
             if currentTour.findPathLength(self.x,self.y) < self.currentBest.findPathLength(self.x,self.y):
                 self.currentBest = currentTour
-                print("Path length:",self.currentBest.findPathLength(self.x,self.y))
+                update(self.currentBest.x,self.currentBest.y)
+                #print("Path length:",self.currentBest.findPathLength(self.x,self.y))
 
             t *= 1 - cr
 
@@ -202,37 +203,62 @@ class Graph:
         plt.show()
     '''
 
-def showProblem():
-    prob = problemName.get()
-    data = TSP_db.getCities(prob)
+def update(x,y):
     ax.clear()
-    ax.scatter(data[0],data[1])
+    ax.plot(x,y)
+    ax.scatter(x,y)
     figure.canvas.draw()
     figure.canvas.flush_events()
 
-ax.plot()
-plt.show()
+def showProblem():
+    try:
+        data = TSP_db.getCities(problemName.get())
+        update(data[0],data[1])
+    except:
+        messagebox.showerror("Error","problem may not exist in database")
 
+
+
+
+
+#prompt and packing for taking the problem name
 problemNamePrompt = tkinter.Label(m,text="Enter problem name",padx=10)
 problemName = tkinter.Entry(m)
 problemNamePrompt.pack(side = tkinter.LEFT)
 problemName.pack(side = tkinter.LEFT)
 
+#create frames for each button set
 addProbFrame = tkinter.Frame(m, pady=10,padx=10)
 fetchSolutionFrame = tkinter.Frame(m, pady=10,padx=10)
 solveProblemFrame = tkinter.Frame(m, pady=10,padx=10)
+
+#pack the frames into the root frame
 addProbFrame.pack(side = tkinter.LEFT)
 fetchSolutionFrame.pack(side = tkinter.LEFT)
 solveProblemFrame.pack(side = tkinter.LEFT)
 
+#add and pack addProblem buttons
 addProb_title = tkinter.Label(addProbFrame,text="Add a problem to the database")
 addProb_btn = tkinter.Button(addProbFrame,text="Add to database")
 addProb_title.pack( side = tkinter.TOP,pady = 10)
 addProb_btn.pack( side = tkinter.TOP ,pady = 10)
 
+#add and pack fetchSolution buttons
 fetchSolution_title = tkinter.Label(fetchSolutionFrame,text="Fetch the best solution from the database")
 fetchSolution_btn = tkinter.Button(fetchSolutionFrame,text="Fetch",command=showProblem)
 fetchSolution_title.pack( side = tkinter.TOP,pady = 10)
 fetchSolution_btn.pack( side = tkinter.TOP ,pady = 10)
 
+#add and pack solveProblem buttons
+new = 0
+solveProblem_title = tkinter.Label(solveProblemFrame,text="Solve problem")
+solveProblem_btn = tkinter.Button(solveProblemFrame,text="Solve",command=run)
+nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn)
+sa_option = tkinter.Checkbutton(solveProblemFrame, text="Simulated Annealing",variable=sa)
+solveProblem_title.pack( side = tkinter.TOP,pady = 5)
+nn_option.pack()
+sa_option.pack()
+solveProblem_btn.pack( side = tkinter.TOP ,pady = 10)
+
+plt.show()
 m.mainloop()

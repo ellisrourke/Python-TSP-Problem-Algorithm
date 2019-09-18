@@ -97,30 +97,25 @@ def solve(problem):
 '''
 
 def getCities(problem):
-    print(problem)
     x = []
     y = []
     sql = """SELECT * from cities WHERE name = %s"""
-    val = problem
+    val = (problem,)
 
-    try:
-            mycursor.execute(sql,val)
-            ret = mycursor.fetchall()
 
-            #print(ret[2][2],ret[2][3])
-            sql = "SELECT dimention FROM problem WHERE name = %s"
-            val = problem
-            mycursor.execute(sql,val)
-            dim = mycursor.fetchone()
-            dim = dim[0]
-            print(dim)
+    mycursor.execute(sql, val)
+    ret = mycursor.fetchall()
+    # print(ret[2][2],ret[2][3])
+    sql = "SELECT dimention FROM problem WHERE name = %s"
+    val = (problem,)
+    mycursor.execute(sql, val)
+    dim = mycursor.fetchone()
+    dim = dim[0]
 
-            for i in range(0,dim):
-                x.append(ret[i][2])
-                y.append(ret[i][3])
+    for i in range(0, dim):
+        x.append(ret[i][2])
+        y.append(ret[i][3])
+    return(x,y,dim)
 
-            return (x, y)
 
-    except:
-            print("problem may not exist in database")
 
