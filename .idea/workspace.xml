@@ -4,6 +4,7 @@
     <list default="true" id="10283be5-8890-4d3d-9fcc-a0f083419516" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TSP.py" beforeDir="false" afterPath="$PROJECT_DIR$/TSP.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSP_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/TSP_db.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,12 +17,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/TSP_db.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="112" selection-start-line="112" selection-end-line="112" />
+            <state relative-caret-position="414">
+              <caret line="48" lean-forward="true" selection-start-line="48" selection-end-line="48" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
-                <element signature="e#294#1158#0" />
-                <element signature="e#1192#1658#0" />
               </folding>
             </state>
           </provider>
@@ -30,11 +29,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/TSP.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
-              <caret line="36" column="20" selection-start-line="36" selection-start-column="20" selection-end-line="36" selection-end-column="20" />
+            <state relative-caret-position="459">
+              <caret line="42" column="19" selection-start-line="42" selection-start-column="19" selection-end-line="42" selection-end-column="19" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
-                <element signature="e#3488#3557#0" />
+                <element signature="e#893#955#0" />
+                <element signature="e#973#3622#0" />
               </folding>
             </state>
           </provider>
@@ -46,8 +46,12 @@
     <findStrings>
       <find>findPath</find>
       <find>append</find>
-      <find>update</find>
       <find>print</find>
+      <find>update</find>
+      <find>end</find>
+      <find>timeAl</find>
+      <find>te</find>
+      <find>time</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -69,7 +73,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-7" />
+    <option name="x" value="533" />
+    <option name="y" value="-8" />
     <option name="width" value="974" />
     <option name="height" value="1057" />
   </component>
@@ -136,7 +141,8 @@
       <option name="presentableId" value="Default" />
       <updated>1567595030073</updated>
       <workItem from="1567595031317" duration="871000" />
-      <workItem from="1568786170135" duration="12116000" />
+      <workItem from="1568786170135" duration="16567000" />
+      <workItem from="1568876015028" duration="2471000" />
     </task>
     <task id="LOCAL-00001" summary="revert">
       <created>1568706489483</created>
@@ -166,11 +172,25 @@
       <option name="project" value="LOCAL" />
       <updated>1568795626039</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Solving and updating plot">
+      <created>1568800321318</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1568800321318</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Solving and updating plot">
+      <created>1568804627522</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1568804627522</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="15688000" />
+    <option name="totallyTimeSpent" value="22610000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
@@ -181,8 +201,8 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.27009645" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39935064" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2636656" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39871383" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -205,10 +225,12 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="revert" />
     <MESSAGE value="prograess" />
-    <option name="LAST_COMMIT_MESSAGE" value="prograess" />
+    <MESSAGE value="Solving and updating plot" />
+    <option name="LAST_COMMIT_MESSAGE" value="Solving and updating plot" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/TravellingSalesperson$tsp_db.coverage" NAME="tsp Coverage Results" MODIFIED="1568800246497" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/TravellingSalesperson$tsp_db.coverage" NAME="tsp Coverage Results" MODIFIED="1568804592192" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/TravellingSalesperson$tsp.coverage" NAME="tsp Coverage Results" MODIFIED="1568878413794" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/pr76.tsp">
@@ -216,25 +238,32 @@
         <state relative-caret-position="-853" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/TSP_db.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="112" selection-start-line="112" selection-end-line="112" />
+        <state relative-caret-position="414">
+          <caret line="48" lean-forward="true" selection-start-line="48" selection-end-line="48" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#294#1158#0" />
-            <element signature="e#1192#1658#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/TSP.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="36" column="20" selection-start-line="36" selection-start-column="20" selection-end-line="36" selection-end-column="20" />
+        <state relative-caret-position="459">
+          <caret line="42" column="19" selection-start-line="42" selection-start-column="19" selection-end-line="42" selection-end-column="19" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
-            <element signature="e#3488#3557#0" />
+            <element signature="e#893#955#0" />
+            <element signature="e#973#3622#0" />
           </folding>
         </state>
       </provider>

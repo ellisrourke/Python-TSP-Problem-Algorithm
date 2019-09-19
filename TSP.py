@@ -23,21 +23,7 @@ results = []
 problemDimension = 0
 sa = tkinter.IntVar()
 nn = tkinter.IntVar()
-
-def run():
-
-    global problemDimension
-    data = TSP_db.getCities(problemName.get())
-    problemDimension = data[2]
-    x = data[0]
-    y = data[1]
-    x.append(x[0])
-    y.append(y[0])
-    #print(len(x),"len")
-    solve = annealing(x,y)
-    solve.simulate(x,y,int(solveProblem_timeAllowed.get()))
-
-
+timeIn = tkinter.StringVar()
 
 def calculateDistance(x1,y1,x2,y2):
      dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
@@ -158,11 +144,13 @@ class annealing:
     def simulate(self,x,y,maxtime=20):
         self.x = x
         self.y = y
-        t = 10000000
-        cr = 0.0000001
+        t = 1000000000000
+        cr = 0.00000000001
         currentTour = tour(self.x,self.y)
         self.currentBest = currentTour
-        #self.currentBest.nn(self.x,self.y)
+
+        self.currentBest.nn(self.x,self.y)
+
         # cooling
 
         while t > 0 and (time.time() - start_time)<maxtime:
@@ -215,10 +203,34 @@ def showProblem():
     except:
         messagebox.showerror("Error","problem may not exist in database")
 
+def fetchBest():
+    try:
+        data = TSP_db.fetch(problemName.get())
+        probN.config(text=(data[1]))
+        dist.config(text=(data[2]))
+        time.config(text=(data[3]))
 
+    except:
+        messagebox.showerror("Error","Unable to fetch solution")
 
+def run():
+    global problemDimension
+    data = TSP_db.getCities(problemName.get())
+    problemDimension = data[2]
+    x = data[0]
+    y = data[1]
+    x.append(x[0])
+    y.append(y[0])
+    #print(len(x),"len")
+    solve = annealing(x,y)
+    solve.simulate(x,y,10)
+    if(messagebox.askyesno("Process complete","The solver has completed...\nPush solution to database?")):
+        pushSolution()
+    else:
+        print("YEET")
 
-
+def pushSolution():
+    print("yeeted")
 #prompt and packing for taking the problem name
 problemNamePrompt = tkinter.Label(m,text="Enter problem name",padx=10)
 problemName = tkinter.Entry(m)
@@ -243,14 +255,23 @@ addProb_btn.pack( side = tkinter.TOP ,pady = 10)
 
 #add and pack fetchSolution buttons
 fetchSolution_title = tkinter.Label(fetchSolutionFrame,text="Fetch the best solution from the database")
+fetchSolution_btn = tkinter.Button(fetchSolutionFrame,text="fetch",command=fetchBest)
+probN = tkinter.Label(fetchSolutionFrame)
+dist = tkinter.Label(fetchSolutionFrame)
+timeLabel = tkinter.Label(fetchSolutionFrame)
 fetchSolution_title.pack( side = tkinter.TOP,pady = 10)
+fetchSolution_btn.pack( side = tkinter.TOP,pady=10)
+probN.pack()
+dist.pack()
+timeLabel.pack()
+
 
 #add and pack solveProblem buttons
 solveProblem_title = tkinter.Label(solveProblemFrame,text="Solve problem").pack(side = tkinter.TOP,pady = 5)
 solveProblem_plotPoints = tkinter.Button(solveProblemFrame,text="plot cities",command=showProblem).pack()
 
 solveProblem_timeAllowedLabel = tkinter.Label(solveProblemFrame,text="time allowed").pack()
-solveProblem_timeAllowed = tkinter.Entry(solveProblemFrame)
+solveProblem_timeAllowed = tkinter.Entry(solveProblemFrame,textvariable=timeIn)
 solveProblem_timeAllowed.pack()
 nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn).pack(pady=10)
 sa_option = tkinter.Checkbutton(solveProblemFrame, text="Simulated Annealing",variable=sa).pack()

@@ -44,11 +44,8 @@ def fetch(problem):
     val = (problem,problem)
     try:
         mycursor.execute(sql,val)
-        ret = mycursor.fetchone()
-        print("\nProblem:",ret[1])
-        print("Tour Length:",ret[2])
-        print("Calculation Time:",ret[3])
-        print("Algorithm:",ret[4],"\n")
+        return mycursor.fetchone()
+
 
     except:
         print("error finding record")
