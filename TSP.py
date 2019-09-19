@@ -17,8 +17,8 @@ figure = plt.Figure( figsize=(5, 5) )
 ax = figure.add_subplot(111)
 chart_type = FigureCanvasTkAgg(figure, m)
 chart_type.get_tk_widget().pack()
+start_time = 0
 
-start_time = time.time()
 results = []
 problemDimension = 0
 sa = tkinter.IntVar()
@@ -91,7 +91,7 @@ class tour:
         newY.append(newY[0])
         newX.append(newX[0])
         self.tour = myTour
-
+        update(newX,newY)
 
     def get_len(self):
         return len(self.tour)
@@ -135,58 +135,67 @@ class annealing:
         self.x = thisx
         self.y = thisy
         self.finalPath = None
+        self.finalPath = resetTime()
+
 
     def acceptProbability(self, t, e, ne):
         if ne < e:
             return 1
         return math.exp((e - ne) / t)
 
-    def simulate(self,x,y,maxtime=20):
+    def simulate(self,x,y,maxtime):
+
         self.x = x
         self.y = y
         t = 1000000000000
         cr = 0.00000000001
         currentTour = tour(self.x,self.y)
         self.currentBest = currentTour
-
-        self.currentBest.nn(self.x,self.y)
+        if(nn.get()):
+            print("NN RUNNING")
+            self.currentBest.nn(self.x,self.y)
 
         # cooling
+        if(sa.get()):
+            print("SA RUNNING")
+            while t > 0 and (time.time() - start_time)<maxtime:
+                newtour = tour(self.x,self.y)
+                newtour.tour = copy.deepcopy(self.currentBest.tour)
 
-        while t > 0 and (time.time() - start_time)<maxtime:
-            newtour = tour(self.x,self.y)
-            newtour.tour = copy.deepcopy(self.currentBest.tour)
+                touri = random.randint(1, len(newtour.tour)-2)
+                tourj = random.randint(1, len(newtour.tour)-2)
+                while tourj == touri:
+                    tourj = random.randint(1, problemDimension-2)
 
-            touri = random.randint(1, len(newtour.tour)-2)
-            tourj = random.randint(1, len(newtour.tour)-2)
-            while tourj == touri:
-                tourj = random.randint(1, problemDimension-2)
+                newtour.makeSwap(touri, tourj)
+                ce = self.currentBest.findPathLength(self.x,self.y)
+                ne = newtour.findPathLength(self.x,self.y)
 
-            newtour.makeSwap(touri, tourj)
-            ce = self.currentBest.findPathLength(self.x,self.y)
-            ne = newtour.findPathLength(self.x,self.y)
+                if self.acceptProbability(t, ce, ne) > random.uniform(0,1):
+                    currentTour = newtour
 
-            if self.acceptProbability(t, ce, ne) > random.uniform(0,1):
-                currentTour = newtour
+                if currentTour.findPathLength(self.x,self.y) < self.currentBest.findPathLength(self.x,self.y):
+                    self.currentBest = currentTour
+                    data = self.currentBest.retTour(x,y)
+                    update(data[0],data[1])
+                    solveProblem_currentLength.config(text=self.currentBest.findPathLength(self.x,self.y))
+                    #print("Path length:",self.currentBest.findPathLength(self.x,self.y))
+                    #print(self.currentBest.x)
 
-            if currentTour.findPathLength(self.x,self.y) < self.currentBest.findPathLength(self.x,self.y):
-                self.currentBest = currentTour
-                data = self.currentBest.retTour(x,y)
-                update(data[0],data[1])
-                solveProblem_currentLength.config(text=self.currentBest.findPathLength(self.x,self.y))
-                #print("Path length:",self.currentBest.findPathLength(self.x,self.y))
-                #print(self.currentBest.x)
-
-            t *= 1 - cr
+                t *= 1 - cr
 
 
-        #print("final length: ", self.currentBest.findPathLength(self.x,self.y))
-        self.finalPath = self.currentBest
-        #self.finalPath.tour.append(-1)
-        #for i in range(self.problem.dimension+2):
-            #print(self.finalPath.retTour()[i])
+            #print("final length: ", self.currentBest.findPathLength(self.x,self.y))
+            self.finalPath = self.currentBest
+            #self.finalPath.tour.append(-1)
+            #for i in range(self.problem.dimension+2):
+                #print(self.finalPath.retTour()[i])
 
-        self.finalPath.tour.append(-1)
+            self.finalPath.tour.append(-1)
+
+def resetTime():
+    global start_time
+    start_time = time.time()
 
 def update(x,y,plotBool=1):
     ax.clear()
@@ -200,6 +209,7 @@ def showProblem():
     try:
         data = TSP_db.getCities(problemName.get())
         update(data[0],data[1],0)
+
     except:
         messagebox.showerror("Error","problem may not exist in database")
 
@@ -208,29 +218,36 @@ def fetchBest():
         data = TSP_db.fetch(problemName.get())
         probN.config(text=(data[1]))
         dist.config(text=(data[2]))
-        time.config(text=(data[3]))
+        timeLabel.config(text=(data[3]))
 
     except:
         messagebox.showerror("Error","Unable to fetch solution")
 
 def run():
-    global problemDimension
-    data = TSP_db.getCities(problemName.get())
-    problemDimension = data[2]
-    x = data[0]
-    y = data[1]
-    x.append(x[0])
-    y.append(y[0])
-    #print(len(x),"len")
-    solve = annealing(x,y)
-    solve.simulate(x,y,10)
-    if(messagebox.askyesno("Process complete","The solver has completed...\nPush solution to database?")):
-        pushSolution()
-    else:
-        print("YEET")
+    try:
+        global problemDimension
+        data = TSP_db.getCities(problemName.get())
+        problemDimension = data[2]
+        x = data[0]
+        y = data[1]
+        x.append(x[0])
+        y.append(y[0])
+        #print(len(x),"len")
+        solve = annealing(x,y)
+        solve.simulate(x,y,int(solveProblem_timeAllowed.get()))
+        if(messagebox.askyesno("Process complete","The solver has completed...\nPush solution to database?")):
+            pushSolution()
+        else:
+            print("YEET")
+    except:
+        messagebox.showerror("Error","Unable to solve")
 
 def pushSolution():
     print("yeeted")
+
+def addProblem():
+    TSP_db.addToDatabase(problemName.get())
+
 #prompt and packing for taking the problem name
 problemNamePrompt = tkinter.Label(m,text="Enter problem name",padx=10)
 problemName = tkinter.Entry(m)
@@ -249,7 +266,7 @@ solveProblemFrame.pack(side = tkinter.LEFT)
 
 #add and pack addProblem buttons
 addProb_title = tkinter.Label(addProbFrame,text="Add a problem to the database")
-addProb_btn = tkinter.Button(addProbFrame,text="Add to database")
+addProb_btn = tkinter.Button(addProbFrame,text="Add to database",command=addProblem)
 addProb_title.pack( side = tkinter.TOP,pady = 10)
 addProb_btn.pack( side = tkinter.TOP ,pady = 10)
 
@@ -272,9 +289,16 @@ solveProblem_plotPoints = tkinter.Button(solveProblemFrame,text="plot cities",co
 
 solveProblem_timeAllowedLabel = tkinter.Label(solveProblemFrame,text="time allowed").pack()
 solveProblem_timeAllowed = tkinter.Entry(solveProblemFrame,textvariable=timeIn)
+solveProblem_timeAllowed.insert(0,"10")
 solveProblem_timeAllowed.pack()
-nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn).pack(pady=10)
-sa_option = tkinter.Checkbutton(solveProblemFrame, text="Simulated Annealing",variable=sa).pack()
+nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn,onvalue = 1, offvalue = 0)
+sa_option = tkinter.Checkbutton(solveProblemFrame, text="Simulated Annealing",variable=sa,onvalue = 1, offvalue = 0)
+nn_option.pack()
+sa_option.pack()
+nn_option.toggle()
+sa_option.toggle()
+
+
 solveProblem_btn = tkinter.Button(solveProblemFrame,text="Solve",command=run).pack(side = tkinter.TOP ,pady = 10)
 solveProblem_currentLength_title = tkinter.Label(solveProblemFrame,text="Current path Length").pack()
 solveProblem_currentLength = tkinter.Label(solveProblemFrame,text="NULL")
