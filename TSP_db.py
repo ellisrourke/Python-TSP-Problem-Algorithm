@@ -35,14 +35,16 @@ def addToDatabase(prob):
     connection.commit()
 
 def fetch(problem):
-    sql = "SELECT * from Solution WHERE ProblemName = %s AND TourLength = (SELECT min(TourLength) FROM Solution WHERE Problem = %s)"
-    val = (problem,problem)
+    sql = "SELECT * FROM Solution WHERE ProblemName = %s AND TourLength = (SELECT min(TourLength) FROM Solution WHERE ProblemName = %s)"
+    val = (problem, problem)
     try:
         mycursor.execute(sql,val)
-        return mycursor.fetchone()
-
+        data = mycursor.fetchone()
+        print(data)
+        return(data[1],data[2],data[6])
     except:
         print("error finding record")
+
     connection.commit()
 
 def getCities(problem):
@@ -65,5 +67,13 @@ def getCities(problem):
         y.append(ret[i][3])
     return(x,y,dim)
 
-
+def submitSolution(prob,tourLen,time,alg,tour):
+    #sql = "INSERT INTO solution (problem,tourLength,calculationTime,algorithm,tour,solvedBy) VALUES (%s, %s, %s, %s, %s, %s)"
+    #val = (sys.argv[1], data[0], sys.argv[3], 'simulatedAnnealing', datastr, 'Ellis Rourke')
+    #try:
+        #mycursor.execute(sql, val)
+    #except:
+        #print("error occured")
+    #connection.commit()
+    print(prob,int(tourLen),time,alg,tour)
 

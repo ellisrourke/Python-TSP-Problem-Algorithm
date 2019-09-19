@@ -13,12 +13,12 @@ from matplotlib import style
 style.use('fivethirtyeight')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 m=tkinter.Tk()
-figure = plt.Figure( figsize=(5, 5) )
+figure = plt.Figure( figsize=(6, 6) )
 ax = figure.add_subplot(111)
+
 chart_type = FigureCanvasTkAgg(figure, m)
 chart_type.get_tk_widget().pack()
 start_time = 0
-
 results = []
 problemDimension = 0
 sa = tkinter.IntVar()
@@ -147,13 +147,14 @@ class annealing:
 
         self.x = x
         self.y = y
-        t = 1000000000000
-        cr = 0.00000000001
+        t = 1000
+        cr = 0.0000001
         currentTour = tour(self.x,self.y)
         self.currentBest = currentTour
         if(nn.get()):
             print("NN RUNNING")
             self.currentBest.nn(self.x,self.y)
+
 
         # cooling
         if(sa.get()):
@@ -191,7 +192,11 @@ class annealing:
             #for i in range(self.problem.dimension+2):
                 #print(self.finalPath.retTour()[i])
 
-            self.finalPath.tour.append(-1)
+            #self.finalPath.tour.append(-1)
+
+            return(self.currentBest.findPathLength(self.x,self.y),self.finalPath.tour)
+
+
 
 def resetTime():
     global start_time
@@ -216,10 +221,10 @@ def showProblem():
 def fetchBest():
     try:
         data = TSP_db.fetch(problemName.get())
-        probN.config(text=(data[1]))
-        dist.config(text=(data[2]))
-        timeLabel.config(text=(data[3]))
-
+        print(data)
+        probN.config(text=data[0])
+        dist.config(text=data[1])
+        timeLabel.config(text=data[2])
     except:
         messagebox.showerror("Error","Unable to fetch solution")
 
@@ -234,16 +239,23 @@ def run():
         y.append(y[0])
         #print(len(x),"len")
         solve = annealing(x,y)
-        solve.simulate(x,y,int(solveProblem_timeAllowed.get()))
+        data = solve.simulate(x,y,int(solveProblem_timeAllowed.get()))
+        print(data)
+
+        datastr =  (str(data[1])).replace(",","")
+        datastr  = datastr.strip('[]')
+        datastr = datastr + " -1"
+        print(datastr)
         if(messagebox.askyesno("Process complete","The solver has completed...\nPush solution to database?")):
-            pushSolution()
+            print("test")
+            #problem,tourLength,calculationTime,algorithm,tour,solvedBy
+            #return(self.finalPath.findPathLength(x,y),self.finalPath.tour)
+            TSP_db.submitSolution(problemName.get(),data[0],solveProblem_timeAllowed.get(),"ALG",datastr)
         else:
             print("YEET")
     except:
         messagebox.showerror("Error","Unable to solve")
 
-def pushSolution():
-    print("yeeted")
 
 def addProblem():
     TSP_db.addToDatabase(problemName.get())
