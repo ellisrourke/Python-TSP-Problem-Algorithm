@@ -6,18 +6,22 @@ import time
 import copy
 import sys
 import tkinter
+from tkinter import ttk
 from tkinter import messagebox
 plt.ion()
 
 from matplotlib import style
-style.use('fivethirtyeight')
+#style.use('seaborn-dark')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 m=tkinter.Tk()
-figure = plt.Figure( figsize=(6, 6) )
+m.configure(background='#ECECEC')
+m.minsize(1000,800)
+m.maxsize(1000,800)
+figure = plt.Figure( figsize=(8, 4) )
 ax = figure.add_subplot(111)
-
+figure.set_facecolor('#ECECEC')
+plt.show()
 chart_type = FigureCanvasTkAgg(figure, m)
-chart_type.get_tk_widget().pack()
 start_time = 0
 results = []
 problemDimension = 0
@@ -93,6 +97,7 @@ class tour:
         self.tour = myTour
         update(newX,newY)
 
+
     def get_len(self):
         return len(self.tour)
 
@@ -135,7 +140,7 @@ class annealing:
         self.x = thisx
         self.y = thisy
         self.finalPath = None
-        self.finalPath = resetTime()
+        resetTime()
 
 
     def acceptProbability(self, t, e, ne):
@@ -147,18 +152,18 @@ class annealing:
 
         self.x = x
         self.y = y
-        t = 1000
-        cr = 0.0000001
+        t = 99999999999999999
+        cr = 0.00000000000000001
         currentTour = tour(self.x,self.y)
         self.currentBest = currentTour
-        if(nn.get()):
-            print("NN RUNNING")
-            self.currentBest.nn(self.x,self.y)
 
+        if(nn.get()):
+            #print("NN RUNNING")
+            self.currentBest.nn(self.x,self.y)
 
         # cooling
         if(sa.get()):
-            print("SA RUNNING")
+            #print("SA RUNNING")
             while t > 0 and (time.time() - start_time)<maxtime:
                 newtour = tour(self.x,self.y)
                 newtour.tour = copy.deepcopy(self.currentBest.tour)
@@ -197,7 +202,6 @@ class annealing:
             return(self.currentBest.findPathLength(self.x,self.y),self.finalPath.tour)
 
 
-
 def resetTime():
     global start_time
     start_time = time.time()
@@ -221,7 +225,7 @@ def showProblem():
 def fetchBest():
     try:
         data = TSP_db.fetch(problemName.get())
-        print(data)
+        #print(data)
         probN.config(text=data[0])
         dist.config(text=data[1])
         timeLabel.config(text=data[2])
@@ -240,19 +244,19 @@ def run():
         #print(len(x),"len")
         solve = annealing(x,y)
         data = solve.simulate(x,y,int(solveProblem_timeAllowed.get()))
-        print(data)
+        #print(data)
 
         datastr =  (str(data[1])).replace(",","")
         datastr  = datastr.strip('[]')
         datastr = datastr + " -1"
-        print(datastr)
+        #print(datastr)
         if(messagebox.askyesno("Process complete","The solver has completed...\nPush solution to database?")):
             print("test")
             #problem,tourLength,calculationTime,algorithm,tour,solvedBy
             #return(self.finalPath.findPathLength(x,y),self.finalPath.tour)
             TSP_db.submitSolution(problemName.get(),data[0],solveProblem_timeAllowed.get(),"ALG",datastr)
         else:
-            print("YEET")
+            print()
     except:
         messagebox.showerror("Error","Unable to solve")
 
@@ -260,27 +264,38 @@ def run():
 def addProblem():
     TSP_db.addToDatabase(problemName.get())
 
-#prompt and packing for taking the problem name
-problemNamePrompt = tkinter.Label(m,text="Enter problem name",padx=10)
-problemName = tkinter.Entry(m)
+#prompt and packing for taking the prolem name
+probNameFrame = tkinter.Frame(m,pady=15)
+problemNamePrompt = tkinter.Label(probNameFrame,text="Enter problem name",padx=10,font=("Laksaman",20))
+problemName = tkinter.Entry(probNameFrame,)
 problemNamePrompt.pack(side = tkinter.LEFT)
 problemName.pack(side = tkinter.LEFT)
 
 #create frames for each button set
-addProbFrame = tkinter.Frame(m, pady=10,padx=10)
-fetchSolutionFrame = tkinter.Frame(m, pady=10,padx=10)
-solveProblemFrame = tkinter.Frame(m, pady=10,padx=10)
+#addProbFrame = tkinter.Frame(m, pady=10,padx=10)
+
+optionsFrame = tkinter.Frame(m,borderwidth=5,relief='groove')
+addProbFrame = tkinter.Frame(optionsFrame,bd=5,relief='groove')
+fetchSolutionFrame = tkinter.Frame(optionsFrame, pady=10,padx=10)
+solveProblemFrame = tkinter.Frame(optionsFrame, pady=10,padx=10)
 
 #pack the frames into the root frame
-addProbFrame.pack(side = tkinter.LEFT)
-fetchSolutionFrame.pack(side = tkinter.LEFT)
-solveProblemFrame.pack(side = tkinter.LEFT)
+chart_type.get_tk_widget().pack(side=tkinter.TOP)
+probNameFrame.pack(side = tkinter.TOP)
+
+optionsFrame.pack(side = tkinter.TOP)
+addProbFrame.pack(side = tkinter.LEFT,padx=30)
+fetchSolutionFrame.pack(side = tkinter.LEFT,padx=30)
+solveProblemFrame.pack(side = tkinter.LEFT,padx=30)
 
 #add and pack addProblem buttons
 addProb_title = tkinter.Label(addProbFrame,text="Add a problem to the database")
-addProb_btn = tkinter.Button(addProbFrame,text="Add to database",command=addProblem)
+addProb_btn = ttk.Button(addProbFrame,text="Add to database",command=addProblem)
 addProb_title.pack( side = tkinter.TOP,pady = 10)
 addProb_btn.pack( side = tkinter.TOP ,pady = 10)
+
+w = ttk.Separator(m,orient=tkinter.HORIZONTAL)
+w.pack()
 
 #add and pack fetchSolution buttons
 fetchSolution_title = tkinter.Label(fetchSolutionFrame,text="Fetch the best solution from the database")

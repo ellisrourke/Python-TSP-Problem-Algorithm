@@ -31,7 +31,6 @@ def addToDatabase(prob):
             print("record inserted.")
         except:
             print("Problem already exists in database")
-            break
     connection.commit()
 
 def fetch(problem):
@@ -68,12 +67,11 @@ def getCities(problem):
     return(x,y,dim)
 
 def submitSolution(prob,tourLen,time,alg,tour):
-    #sql = "INSERT INTO solution (problem,tourLength,calculationTime,algorithm,tour,solvedBy) VALUES (%s, %s, %s, %s, %s, %s)"
-    #val = (sys.argv[1], data[0], sys.argv[3], 'simulatedAnnealing', datastr, 'Ellis Rourke')
-    #try:
-        #mycursor.execute(sql, val)
-    #except:
-        #print("error occured")
-    #connection.commit()
-    print(prob,int(tourLen),time,alg,tour)
+    sql = "INSERT INTO Solution (ProblemName,TourLength,RunningTime,Algorithm,Tour,Author) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (prob, tourLen, time, 'simulatedAnnealing', tour, 'Ellis Rourke')
+    try:
+        mycursor.execute(sql, val)
+    except:
+        print("error occured")
+    connection.commit()
 
