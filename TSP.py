@@ -17,11 +17,14 @@ m=tkinter.Tk()
 m.configure(background='#ECECEC')
 m.minsize(1000,800)
 m.maxsize(1000,800)
-figure = plt.Figure( figsize=(8, 4) )
+figure = plt.Figure( figsize=(4, 4) )
 ax = figure.add_subplot(111)
 figure.set_facecolor('#ECECEC')
 plt.show()
-chart_type = FigureCanvasTkAgg(figure, m)
+plots = tkinter.Frame(m)
+
+chart_type = FigureCanvasTkAgg(figure, plots)
+chart_type2 = FigureCanvasTkAgg(figure,plots)
 start_time = 0
 results = []
 problemDimension = 0
@@ -214,6 +217,8 @@ def update(x,y,plotBool=1):
     figure.canvas.draw()
     figure.canvas.flush_events()
 
+
+
 def showProblem():
     try:
         data = TSP_db.getCities(problemName.get())
@@ -265,9 +270,9 @@ def addProblem():
     TSP_db.addToDatabase(problemName.get())
 
 #prompt and packing for taking the prolem name
-probNameFrame = tkinter.Frame(m,pady=15)
-problemNamePrompt = tkinter.Label(probNameFrame,text="Enter problem name",padx=10,font=("Laksaman",20))
-problemName = tkinter.Entry(probNameFrame,)
+probNameFrame = tkinter.Frame(m,pady=15,bg='#ECECEC')
+problemNamePrompt = tkinter.Label(probNameFrame,text="Enter problem name",padx=10,font='Laksaman 18 bold',bg='#ECECEC')
+problemName = tkinter.Entry(probNameFrame)
 problemNamePrompt.pack(side = tkinter.LEFT)
 problemName.pack(side = tkinter.LEFT)
 
@@ -280,9 +285,13 @@ fetchSolutionFrame = tkinter.Frame(optionsFrame, pady=10,padx=10)
 solveProblemFrame = tkinter.Frame(optionsFrame, pady=10,padx=10)
 
 #pack the frames into the root frame
-chart_type.get_tk_widget().pack(side=tkinter.TOP)
-probNameFrame.pack(side = tkinter.TOP)
+chart_type2.get_tk_widget().pack(side=tkinter.RIGHT)
+chart_type.get_tk_widget().pack(side=tkinter.LEFT)
 
+
+
+plots.pack(side=tkinter.TOP)
+probNameFrame.pack(side = tkinter.TOP)
 optionsFrame.pack(side = tkinter.TOP)
 addProbFrame.pack(side = tkinter.LEFT,padx=30)
 fetchSolutionFrame.pack(side = tkinter.LEFT,padx=30)
