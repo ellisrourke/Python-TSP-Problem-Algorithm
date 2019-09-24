@@ -160,8 +160,8 @@ class annealing:
 
         self.x = x
         self.y = y
-        t = 9999999999999999999999999
-        cr = 0.0000000000000000000001
+        t = 500000000000
+        cr = 0.000000000001
         currentTour = tour(self.x,self.y)
         self.currentBest = currentTour
 
