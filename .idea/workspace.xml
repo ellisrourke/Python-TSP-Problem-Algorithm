@@ -4,8 +4,6 @@
     <list default="true" id="10283be5-8890-4d3d-9fcc-a0f083419516" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TSP.py" beforeDir="false" afterPath="$PROJECT_DIR$/TSP.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TSP_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/TSP_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.tsp" beforeDir="false" afterPath="$PROJECT_DIR$/test.tsp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,12 +12,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/TSP_db.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="315">
-              <caret line="21" column="52" lean-forward="true" selection-start-line="21" selection-start-column="52" selection-end-line="21" selection-end-column="52" />
+              <caret line="21" column="52" selection-start-line="21" selection-start-column="52" selection-end-line="21" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -27,56 +25,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/TSP.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="256">
-              <caret line="296" column="46" lean-forward="true" selection-start-line="296" selection-start-column="46" selection-end-line="296" selection-end-column="46" />
+            <state relative-caret-position="34">
+              <caret line="163" column="34" selection-start-line="163" selection-start-column="34" selection-end-line="163" selection-end-column="34" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
-                <element signature="e#609#671#0" />
-                <element signature="e#689#3363#0" />
-                <element signature="e#723#902#0" />
-                <element signature="e#932#945#0" />
-                <element signature="e#975#988#0" />
-                <element signature="e#1020#2328#0" />
-                <element signature="e#1218#1346#0" />
-                <element signature="e#1499#1941#0" />
-                <element signature="e#1570#1749#0" />
-                <element signature="e#1991#2159#0" />
-                <element signature="e#2043#2159#0" />
-                <element signature="e#2090#2159#0" />
-                <element signature="e#2361#2382#0" />
-                <element signature="e#2422#2525#0" />
-                <element signature="e#2562#2816#0" />
-                <element signature="e#2636#2730#0" />
-                <element signature="e#2860#3363#0" />
-                <element signature="e#2955#3306#0" />
-                <element signature="e#3028#3045#0" />
-                <element signature="e#3258#3275#0" />
-                <element signature="e#3426#3530#0" />
-                <element signature="e#3584#3653#0" />
-                <element signature="e#4106#5265#0" />
-                <element signature="e#4861#5236#0" />
-                <element signature="e#5120#5189#0" />
-                <element signature="e#5411#5442#0" />
-                <element signature="e#5707#5753#0" />
-                <element signature="e#5787#5918#0" />
-                <element signature="e#5943#6119#0" />
-                <element signature="e#5956#6032#0" />
-                <element signature="e#6142#6398#0" />
-                <element signature="e#6155#6321#0" />
-                <element signature="e#7045#7312#0" />
-                <element signature="e#7071#7130#0" />
-                <element signature="e#7445#7484#0" />
-                <element signature="e#7889#7923#0" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test.tsp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -87,6 +40,9 @@
     <findStrings>
       <find>unable to sol</find>
       <find>print</find>
+      <find>update</find>
+      <find>distanceT</find>
+      <find>time</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -178,12 +134,28 @@
       <option name="presentableId" value="Default" />
       <updated>1567595030073</updated>
       <workItem from="1567595031317" duration="871000" />
-      <workItem from="1568937351491" duration="7457000" />
+      <workItem from="1568937351491" duration="9134000" />
+      <workItem from="1569295595113" duration="2030000" />
     </task>
+    <task id="LOCAL-00001" summary="qe">
+      <created>1568978893751</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1568978893751</updated>
+    </task>
+    <task id="LOCAL-00002" summary="qe">
+      <created>1568980451750</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1568980451750</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8328000" />
+    <option name="totallyTimeSpent" value="12035000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -198,7 +170,7 @@
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1223176" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.12374821" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -224,10 +196,21 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="qe" />
+    <option name="LAST_COMMIT_MESSAGE" value="qe" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/TravellingSalesperson$TSP.coverage" NAME="TSP Coverage Results" MODIFIED="1568978857401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/TravellingSalesperson$TSP.coverage" NAME="TSP Coverage Results" MODIFIED="1569297804551" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/TSP_db.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="52" selection-start-line="21" selection-start-column="52" selection-end-line="21" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test.tsp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
@@ -235,55 +218,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/TSP_db.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="52" lean-forward="true" selection-start-line="21" selection-start-column="52" selection-end-line="21" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/TSP.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="296" column="46" lean-forward="true" selection-start-line="296" selection-start-column="46" selection-end-line="296" selection-end-column="46" />
+        <state relative-caret-position="34">
+          <caret line="163" column="34" selection-start-line="163" selection-start-column="34" selection-end-line="163" selection-end-column="34" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
-            <element signature="e#609#671#0" />
-            <element signature="e#689#3363#0" />
-            <element signature="e#723#902#0" />
-            <element signature="e#932#945#0" />
-            <element signature="e#975#988#0" />
-            <element signature="e#1020#2328#0" />
-            <element signature="e#1218#1346#0" />
-            <element signature="e#1499#1941#0" />
-            <element signature="e#1570#1749#0" />
-            <element signature="e#1991#2159#0" />
-            <element signature="e#2043#2159#0" />
-            <element signature="e#2090#2159#0" />
-            <element signature="e#2361#2382#0" />
-            <element signature="e#2422#2525#0" />
-            <element signature="e#2562#2816#0" />
-            <element signature="e#2636#2730#0" />
-            <element signature="e#2860#3363#0" />
-            <element signature="e#2955#3306#0" />
-            <element signature="e#3028#3045#0" />
-            <element signature="e#3258#3275#0" />
-            <element signature="e#3426#3530#0" />
-            <element signature="e#3584#3653#0" />
-            <element signature="e#4106#5265#0" />
-            <element signature="e#4861#5236#0" />
-            <element signature="e#5120#5189#0" />
-            <element signature="e#5411#5442#0" />
-            <element signature="e#5707#5753#0" />
-            <element signature="e#5787#5918#0" />
-            <element signature="e#5943#6119#0" />
-            <element signature="e#5956#6032#0" />
-            <element signature="e#6142#6398#0" />
-            <element signature="e#6155#6321#0" />
-            <element signature="e#7045#7312#0" />
-            <element signature="e#7071#7130#0" />
-            <element signature="e#7445#7484#0" />
-            <element signature="e#7889#7923#0" />
           </folding>
         </state>
       </provider>

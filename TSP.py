@@ -8,7 +8,9 @@ import sys
 import tkinter
 from tkinter import ttk
 from tkinter import messagebox
+import threading
 plt.ion()
+
 
 from matplotlib import style
 #style.use('seaborn-dark')
@@ -17,20 +19,26 @@ m=tkinter.Tk()
 m.configure(background='#ECECEC')
 m.minsize(1000,800)
 m.maxsize(1000,800)
-figure = plt.Figure( figsize=(4, 4) )
+figure = plt.Figure(figsize = (4,4))
+figure2 = plt.Figure(figsize = (4,4))
 ax = figure.add_subplot(111)
+bx = figure2.add_subplot(111)
 figure.set_facecolor('#ECECEC')
+figure2.set_facecolor('#ECECEC')
+
 plt.show()
 plots = tkinter.Frame(m)
 
 chart_type = FigureCanvasTkAgg(figure, plots)
-chart_type2 = FigureCanvasTkAgg(figure,plots)
+chart_type2 = FigureCanvasTkAgg(figure2,plots)
 start_time = 0
 results = []
 problemDimension = 0
 sa = tkinter.IntVar()
 nn = tkinter.IntVar()
 timeIn = tkinter.StringVar()
+distanceTime = []
+timeTime = []
 
 def calculateDistance(x1,y1,x2,y2):
      dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
@@ -98,7 +106,8 @@ class tour:
         newY.append(newY[0])
         newX.append(newX[0])
         self.tour = myTour
-        update(newX,newY)
+
+        update(newX,newY,1)
 
 
     def get_len(self):
@@ -127,12 +136,8 @@ class tour:
         for i in range(0,len(self.tour)-1):
             tourPos = self.tour[i]
             tourPos2 = self.tour[i+1]
-            #print(tourPos,i)
-            #print(len(x),len(y))
-            #print(x[tourPos],y[tourPos])
-            #print(tourPos, i)
             pathDistance += calculateDistance(x[tourPos],y[tourPos],x[tourPos2],y[tourPos2])
-            #pathDistance = 0
+
 
             #pathDistance = 0
         #print(pathDistance)
@@ -155,19 +160,20 @@ class annealing:
 
         self.x = x
         self.y = y
-        t = 99999999999999999
-        cr = 0.00000000000000001
+        t = 9999999999999999999999999
+        cr = 0.0000000000000000000001
         currentTour = tour(self.x,self.y)
         self.currentBest = currentTour
 
         if(nn.get()):
-            #print("NN RUNNING")
+            print("NN RUNNING")
             self.currentBest.nn(self.x,self.y)
 
         # cooling
         if(sa.get()):
             #print("SA RUNNING")
             while t > 0 and (time.time() - start_time)<maxtime:
+
                 newtour = tour(self.x,self.y)
                 newtour.tour = copy.deepcopy(self.currentBest.tour)
 
@@ -186,7 +192,10 @@ class annealing:
                 if currentTour.findPathLength(self.x,self.y) < self.currentBest.findPathLength(self.x,self.y):
                     self.currentBest = currentTour
                     data = self.currentBest.retTour(x,y)
-                    update(data[0],data[1])
+                    distanceTime.append(self.currentBest.findPathLength(self.x, self.y))
+                    timeTime.append(time.time() - start_time)
+
+                    update(data[0],data[1],1)
                     solveProblem_currentLength.config(text=self.currentBest.findPathLength(self.x,self.y))
                     #print("Path length:",self.currentBest.findPathLength(self.x,self.y))
                     #print(self.currentBest.x)
@@ -208,14 +217,26 @@ class annealing:
 def resetTime():
     global start_time
     start_time = time.time()
+    bx.clear()
+    figure2.canvas.draw()
+    figure2.canvas.flush_events()
+    global distanceTime
+    global timeTime
+    distanceTime = []
+    timeTime = []
 
 def update(x,y,plotBool=1):
+
     ax.clear()
+    bx.clear()
     if plotBool == 1:
         ax.plot(x,y)
+        bx.plot(timeTime,distanceTime)
     ax.scatter(x,y)
     figure.canvas.draw()
     figure.canvas.flush_events()
+    figure2.canvas.draw()
+    figure2.canvas.flush_events()
 
 
 
@@ -223,6 +244,7 @@ def showProblem():
     try:
         data = TSP_db.getCities(problemName.get())
         update(data[0],data[1],0)
+
 
     except:
         messagebox.showerror("Error","problem may not exist in database")
@@ -238,32 +260,37 @@ def fetchBest():
         messagebox.showerror("Error","Unable to fetch solution")
 
 def run():
-    try:
-        global problemDimension
-        data = TSP_db.getCities(problemName.get())
-        problemDimension = data[2]
-        x = data[0]
-        y = data[1]
-        x.append(x[0])
-        y.append(y[0])
-        #print(len(x),"len")
-        solve = annealing(x,y)
-        data = solve.simulate(x,y,int(solveProblem_timeAllowed.get()))
-        #print(data)
+    def callback():
+        try:
+            resetTime()
+            global problemDimension
+            data = TSP_db.getCities(problemName.get())
+            problemDimension = data[2]
+            x = data[0]
+            y = data[1]
+            x.append(x[0])
+            y.append(y[0])
+            #print(len(x),"len")
+            solve = annealing(x,y)
+            data = solve.simulate(x,y,int(solveProblem_timeAllowed.get()))
+            #print(data)
 
-        datastr =  (str(data[1])).replace(",","")
-        datastr  = datastr.strip('[]')
-        datastr = datastr + " -1"
-        #print(datastr)
-        if(messagebox.askyesno("Process complete","The solver has completed...\nPush solution to database?")):
-            print("test")
-            #problem,tourLength,calculationTime,algorithm,tour,solvedBy
-            #return(self.finalPath.findPathLength(x,y),self.finalPath.tour)
-            TSP_db.submitSolution(problemName.get(),data[0],solveProblem_timeAllowed.get(),"ALG",datastr)
-        else:
-            print()
-    except:
-        messagebox.showerror("Error","Unable to solve")
+            datastr =  (str(data[1])).replace(",","")
+            datastr  = datastr.strip('[]')
+            datastr = datastr + " -1"
+            #print(datastr)
+            if(messagebox.askyesno("Process complete","The solver has completed...\nPush solution to database?")):
+                print("test")
+                #problem,tourLength,calculationTime,algorithm,tour,solvedBy
+                #return(self.finalPath.findPathLength(x,y),self.finalPath.tour)
+                TSP_db.submitSolution(problemName.get(),data[0],solveProblem_timeAllowed.get(),"ALG",datastr)
+            else:
+                print()
+        except:
+            messagebox.showerror("Error","Unable to solve")
+
+    t = threading.Thread(target=callback())
+    t.start()
 
 
 def addProblem():
@@ -333,7 +360,6 @@ nn_option.pack()
 sa_option.pack()
 nn_option.toggle()
 sa_option.toggle()
-
 
 solveProblem_btn = tkinter.Button(solveProblemFrame,text="Solve",command=run).pack(side = tkinter.TOP ,pady = 10)
 solveProblem_currentLength_title = tkinter.Label(solveProblemFrame,text="Current path Length").pack()
