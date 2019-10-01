@@ -39,8 +39,8 @@ def fetch(problem):
     try:
         mycursor.execute(sql,val)
         data = mycursor.fetchone()
-        print(data)
-        return(data[1],data[2],data[6])
+        #print(data)
+        return(data[1],data[2],data[6],data[7])
     except:
         print("error finding record")
 

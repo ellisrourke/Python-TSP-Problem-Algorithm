@@ -166,7 +166,7 @@ class annealing:
         self.currentBest = currentTour
 
         if(nn.get()):
-            print("NN RUNNING")
+            #print("NN RUNNING")
             self.currentBest.nn(self.x,self.y)
 
         # cooling
@@ -213,7 +213,6 @@ class annealing:
 
             return(self.currentBest.findPathLength(self.x,self.y),self.finalPath.tour)
 
-
 def resetTime():
     global start_time
     start_time = time.time()
@@ -226,7 +225,6 @@ def resetTime():
     timeTime = []
 
 def update(x,y,plotBool=1):
-
     ax.clear()
     bx.clear()
     if plotBool == 1:
@@ -239,25 +237,57 @@ def update(x,y,plotBool=1):
     figure2.canvas.flush_events()
 
 
-
 def showProblem():
     try:
         data = TSP_db.getCities(problemName.get())
         update(data[0],data[1],0)
-
-
     except:
         messagebox.showerror("Error","problem may not exist in database")
 
+def showSolution(tour):
+        data = TSP_db.getCities(problemName.get())
+        splitTour = str.split(tour)
+        splitTour.remove("-1")
+        splitTour.append((splitTour[0]))
+        print("splittour",splitTour)
+        #print(splitTour)
+        print(data[0])
+        print(data[1])
+        intTour = [int(i) for i in splitTour]
+        print(intTour[53:55])
+        print("len of data[0]",len(data[0]))
+        print("len of data[1]",len(data[1]))
+        print("len of int tour",len(intTour))
+
+        sortedX=[]
+        sortedY=[]
+
+        for i in range(len(intTour)-1):
+            sortedX.append(data[0][intTour[i]])
+            sortedY.append(data[1][intTour[i]])
+            update(sortedX,sortedY,1)
+            print("---------------------------------------------------------------------------------------------------------")
+
+            print(i)
+            print(sortedX[i])
+            print(sortedY[i])
+            print("---------------------------------------------------------------------------------------------------------")
+
+        print("---------------------------------------------------------------------------------------------------------")
+
+        print(len(sortedX))
+        update(sortedX,sortedY,1)
+
+
+
 def fetchBest():
-    try:
         data = TSP_db.fetch(problemName.get())
         #print(data)
         probN.config(text=data[0])
         dist.config(text=data[1])
         timeLabel.config(text=data[2])
-    except:
-        messagebox.showerror("Error","Unable to fetch solution")
+        showSolution(data[3])
+        #messagebox.showerror("Error","Unable to fetch solution")
 
 def run():
     def callback():
