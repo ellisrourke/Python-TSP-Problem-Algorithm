@@ -36,6 +36,7 @@ results = []
 problemDimension = 0
 sa = tkinter.IntVar()
 nn = tkinter.IntVar()
+tourDis = tkinter.StringVar()
 timeIn = tkinter.StringVar()
 distanceTime = []
 timeTime = []
@@ -70,7 +71,7 @@ class tour:
         newY = []
 
         for i in range(0,len(self.tour)):
-            #print(i)
+            ##print(i)
             tourPos = self.tour[i]
             xList.append(self.x[tourPos])
             yList.append(self.y[tourPos])
@@ -114,7 +115,7 @@ class tour:
         return len(self.tour)
 
     def makeSwap(self, a, b):
-        #print(a,b)
+        ##print(a,b)
         temp = self.tour[a]
         self.tour[a] = self.tour[b]
         self.tour[b] = temp
@@ -131,7 +132,7 @@ class tour:
         return (newX,newY)
 
     def findPathLength(self,x,y):
-        #print(x[50])
+        ##print(x[50])
         pathDistance = 0
         for i in range(0,len(self.tour)-1):
             tourPos = self.tour[i]
@@ -140,7 +141,7 @@ class tour:
 
 
             #pathDistance = 0
-        #print(pathDistance)
+        ##print(pathDistance)
         return pathDistance
 
 class annealing:
@@ -166,12 +167,12 @@ class annealing:
         self.currentBest = currentTour
 
         if(nn.get()):
-            #print("NN RUNNING")
+            ##print("NN RUNNING")
             self.currentBest.nn(self.x,self.y)
 
         # cooling
         if(sa.get()):
-            #print("SA RUNNING")
+            ##print("SA RUNNING")
             while t > 0 and (time.time() - start_time)<maxtime:
 
                 newtour = tour(self.x,self.y)
@@ -197,17 +198,17 @@ class annealing:
 
                     update(data[0],data[1],1)
                     solveProblem_currentLength.config(text=self.currentBest.findPathLength(self.x,self.y))
-                    #print("Path length:",self.currentBest.findPathLength(self.x,self.y))
-                    #print(self.currentBest.x)
+                    ##print("Path length:",self.currentBest.findPathLength(self.x,self.y))
+                    ##print(self.currentBest.x)
 
                 t *= 1 - cr
 
 
-            #print("final length: ", self.currentBest.findPathLength(self.x,self.y))
+            ##print("final length: ", self.currentBest.findPathLength(self.x,self.y))
             self.finalPath = self.currentBest
             #self.finalPath.tour.append(-1)
             #for i in range(self.problem.dimension+2):
-                #print(self.finalPath.retTour()[i])
+                ##print(self.finalPath.retTour()[i])
 
             #self.finalPath.tour.append(-1)
 
@@ -249,44 +250,43 @@ def showSolution(tour):
         splitTour = str.split(tour)
         splitTour.remove("-1")
         splitTour.append((splitTour[0]))
-        print("splittour",splitTour)
-        #print(splitTour)
-        print(data[0])
-        print(data[1])
+        #print("splittour",splitTour)
+        ##print(splitTour)
+        #print(data[0])
+        #print(data[1])
         intTour = [int(i) for i in splitTour]
-        print(intTour[53:55])
-        print("len of data[0]",len(data[0]))
-        print("len of data[1]",len(data[1]))
-        print("len of int tour",len(intTour))
+        #print(intTour[53:55])
+        #print("len of data[0]",len(data[0]))
+        #print("len of data[1]",len(data[1]))
+        #print("len of int tour",len(intTour))
 
         sortedX=[]
         sortedY=[]
 
-        for i in range(len(intTour)-1):
+        for i in range(len(intTour)):
             sortedX.append(data[0][intTour[i]])
             sortedY.append(data[1][intTour[i]])
             update(sortedX,sortedY,1)
-            print("---------------------------------------------------------------------------------------------------------")
 
-            print(i)
-            print(sortedX[i])
-            print(sortedY[i])
-            print("---------------------------------------------------------------------------------------------------------")
+            ##print(i)
+            ##print(sortedX[i])
+            ##print(sortedY[i])
 
-        print("---------------------------------------------------------------------------------------------------------")
 
-        print(len(sortedX))
+
+        #print(len(sortedX))
         update(sortedX,sortedY,1)
 
 
 
 def fetchBest():
         data = TSP_db.fetch(problemName.get())
-        #print(data)
+        ##print(data)
         probN.config(text=data[0])
         dist.config(text=data[1])
         timeLabel.config(text=data[2])
-        showSolution(data[3])
+        #tourDisplay.config(text = data[3])
+        tourDis.set(data[3])
         #messagebox.showerror("Error","Unable to fetch solution")
 
 def run():
@@ -300,17 +300,17 @@ def run():
             y = data[1]
             x.append(x[0])
             y.append(y[0])
-            #print(len(x),"len")
+            ##print(len(x),"len")
             solve = annealing(x,y)
             data = solve.simulate(x,y,int(solveProblem_timeAllowed.get()))
-            #print(data)
+            ##print(data)
 
             datastr =  (str(data[1])).replace(",","")
             datastr  = datastr.strip('[]')
             datastr = datastr + " -1"
-            #print(datastr)
+            ##print(datastr)
             if(messagebox.askyesno("Process complete","The solver has completed...\nPush solution to database?")):
-                print("test")
+                #print("test")
                 #problem,tourLength,calculationTime,algorithm,tour,solvedBy
                 #return(self.finalPath.findPathLength(x,y),self.finalPath.tour)
                 TSP_db.submitSolution(problemName.get(),data[0],solveProblem_timeAllowed.get(),"ALG",datastr)
@@ -360,8 +360,9 @@ addProb_btn = ttk.Button(addProbFrame,text="Add to database",command=addProblem)
 addProb_title.pack( side = tkinter.TOP,pady = 10)
 addProb_btn.pack( side = tkinter.TOP ,pady = 10)
 
-w = ttk.Separator(m,orient=tkinter.HORIZONTAL)
-w.pack()
+
+
+
 
 #add and pack fetchSolution buttons
 fetchSolution_title = tkinter.Label(fetchSolutionFrame,text="Fetch the best solution from the database")
@@ -369,12 +370,18 @@ fetchSolution_btn = tkinter.Button(fetchSolutionFrame,text="fetch",command=fetch
 probN = tkinter.Label(fetchSolutionFrame)
 dist = tkinter.Label(fetchSolutionFrame)
 timeLabel = tkinter.Label(fetchSolutionFrame)
+scrollbar = tkinter.Scrollbar(fetchSolutionFrame,orient='horizontal')
+tourDisplay = tkinter.Entry(fetchSolutionFrame,xscrollcommand = scrollbar.set,textvariable=tourDis)
+
+
+#tourDisplay = tkinter.Text(fetchSolutionFrame)
 fetchSolution_title.pack( side = tkinter.TOP,pady = 10)
 fetchSolution_btn.pack( side = tkinter.TOP,pady=10)
 probN.pack()
 dist.pack()
 timeLabel.pack()
-
+tourDisplay.pack()
+scrollbar.pack()
 
 #add and pack solveProblem buttons
 solveProblem_title = tkinter.Label(solveProblemFrame,text="Solve problem").pack(side = tkinter.TOP,pady = 5)
@@ -382,9 +389,9 @@ solveProblem_plotPoints = tkinter.Button(solveProblemFrame,text="plot cities",co
 
 solveProblem_timeAllowedLabel = tkinter.Label(solveProblemFrame,text="time allowed").pack()
 solveProblem_timeAllowed = tkinter.Entry(solveProblemFrame,textvariable=timeIn)
-solveProblem_timeAllowed.insert(0,"10")
+solveProblem_timeAllowed.insert(0,"0")
 solveProblem_timeAllowed.pack()
-nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn,onvalue = 1, offvalue = 0)
+nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn,onvalue = 0, offvalue = 1)
 sa_option = tkinter.Checkbutton(solveProblemFrame, text="Simulated Annealing",variable=sa,onvalue = 1, offvalue = 0)
 nn_option.pack()
 sa_option.pack()

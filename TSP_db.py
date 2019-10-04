@@ -4,7 +4,7 @@ connection = mysql.connector.connect(
     host = 'mysql.ict.griffith.edu.au',
     user = 's5057468',
     password = 'ZXGvz7ra',
-    database = 's5057468db'
+    database = '1810ICTdb'
 )
 
 mycursor = connection.cursor()
@@ -19,7 +19,7 @@ def addToDatabase(prob):
     try:
         mycursor.execute(sql, val)
     except:
-        #print("Problem already exists in database")
+        print("Problem already exists in database")
         exit()
 
 #add all cities to city table
@@ -64,7 +64,7 @@ def getCities(problem):
     for i in range(0, dim):
         x.append(ret[i][2])
         y.append(ret[i][3])
-    return(x,y,dim)
+    return(x,y,dim,)
 
 def submitSolution(prob,tourLen,time,alg,tour):
     sql = "INSERT INTO Solution (ProblemName,TourLength,RunningTime,Algorithm,Tour,Author) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -74,4 +74,3 @@ def submitSolution(prob,tourLen,time,alg,tour):
     except:
         print("error occured")
     connection.commit()
-
