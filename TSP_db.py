@@ -10,6 +10,7 @@ connection = mysql.connector.connect(
 mycursor = connection.cursor()
 
 def addToDatabase(prob):
+
     import tsplib95
     problem = tsplib95.load_problem(prob+".tsp")
     dim = problem.dimension
@@ -19,8 +20,7 @@ def addToDatabase(prob):
     try:
         mycursor.execute(sql, val)
     except:
-        print("Problem already exists in database")
-        exit()
+        print()
 
 #add all cities to city table
     for i in range(1,dim+1):
@@ -28,21 +28,20 @@ def addToDatabase(prob):
         val = (prob,i,(problem.get_display(tour[i])[0]),(problem.get_display(tour[i])[1]))
         try:
             mycursor.execute(sql, val)
-            print("record inserted.")
+            #print("record inserted.")
         except:
-            print("Problem already exists in database")
-    connection.commit()
+            messagebox.showerror("Error","Problem already exists in database")
+
+            break
+        connection.commit()
 
 def fetch(problem):
     sql = "SELECT * FROM Solution WHERE ProblemName = %s AND TourLength = (SELECT min(TourLength) FROM Solution WHERE ProblemName = %s)"
     val = (problem, problem)
-    try:
-        mycursor.execute(sql,val)
-        data = mycursor.fetchone()
-        #print(data)
-        return(data[1],data[2],data[6],data[7])
-    except:
-        print("error finding record")
+    mycursor.execute(sql,val)
+    data = mycursor.fetchone()
+    return(data)
+
 
     connection.commit()
 
@@ -72,5 +71,5 @@ def submitSolution(prob,tourLen,time,alg,tour):
     try:
         mycursor.execute(sql, val)
     except:
-        print("error occured")
+        print()
     connection.commit()

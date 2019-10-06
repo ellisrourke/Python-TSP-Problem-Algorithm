@@ -198,20 +198,9 @@ class annealing:
 
                     update(data[0],data[1],1)
                     solveProblem_currentLength.config(text=self.currentBest.findPathLength(self.x,self.y))
-                    ##print("Path length:",self.currentBest.findPathLength(self.x,self.y))
-                    ##print(self.currentBest.x)
 
                 t *= 1 - cr
-
-
-            ##print("final length: ", self.currentBest.findPathLength(self.x,self.y))
             self.finalPath = self.currentBest
-            #self.finalPath.tour.append(-1)
-            #for i in range(self.problem.dimension+2):
-                ##print(self.finalPath.retTour()[i])
-
-            #self.finalPath.tour.append(-1)
-
             return(self.currentBest.findPathLength(self.x,self.y),self.finalPath.tour)
 
 def resetTime():
@@ -226,16 +215,20 @@ def resetTime():
     timeTime = []
 
 def update(x,y,plotBool=1):
-    ax.clear()
-    bx.clear()
-    if plotBool == 1:
-        ax.plot(x,y)
-        bx.plot(timeTime,distanceTime)
-    ax.scatter(x,y)
-    figure.canvas.draw()
-    figure.canvas.flush_events()
-    figure2.canvas.draw()
-    figure2.canvas.flush_events()
+    try:
+        ax.clear()
+        bx.clear()
+        if plotBool == 1:
+            ax.plot(x,y)
+            bx.plot(timeTime,distanceTime)
+        ax.scatter(x,y)
+        figure.canvas.draw()
+        figure.canvas.flush_events()
+        figure2.canvas.draw()
+        figure2.canvas.flush_events()
+    except:
+        messagebox.showerror("Error","Error occured")
+
 
 
 def showProblem():
@@ -246,19 +239,13 @@ def showProblem():
         messagebox.showerror("Error","problem may not exist in database")
 
 def showSolution(tour):
+    try:
         data = TSP_db.getCities(problemName.get())
         splitTour = str.split(tour)
         splitTour.remove("-1")
         splitTour.append((splitTour[0]))
-        #print("splittour",splitTour)
-        ##print(splitTour)
-        #print(data[0])
-        #print(data[1])
+
         intTour = [int(i) for i in splitTour]
-        #print(intTour[53:55])
-        #print("len of data[0]",len(data[0]))
-        #print("len of data[1]",len(data[1]))
-        #print("len of int tour",len(intTour))
 
         sortedX=[]
         sortedY=[]
@@ -267,27 +254,22 @@ def showSolution(tour):
             sortedX.append(data[0][intTour[i]])
             sortedY.append(data[1][intTour[i]])
             update(sortedX,sortedY,1)
-
-            ##print(i)
-            ##print(sortedX[i])
-            ##print(sortedY[i])
-
-
-
-        #print(len(sortedX))
         update(sortedX,sortedY,1)
+    except:
+        messagebox.showerror("Error","Problem occured when displaying solution")
+
 
 
 
 def fetchBest():
+    try:
         data = TSP_db.fetch(problemName.get())
-        ##print(data)
-        probN.config(text=data[0])
-        dist.config(text=data[1])
-        timeLabel.config(text=data[2])
-        #tourDisplay.config(text = data[3])
-        tourDis.set(data[3])
-        #messagebox.showerror("Error","Unable to fetch solution")
+        probN.config(text="Solved by: "+data[4])
+        dist.config(text="Tour length: "+str(data[2]))
+        timeLabel.config(text="Time taken: "+str(data[6]))
+        tourDis.set(data[7])
+    except:
+        messagebox.showerror("Error","Unable to fetch solution")
 
 def run():
     def callback():
@@ -310,12 +292,7 @@ def run():
             datastr = datastr + " -1"
             ##print(datastr)
             if(messagebox.askyesno("Process complete","The solver has completed...\nPush solution to database?")):
-                #print("test")
-                #problem,tourLength,calculationTime,algorithm,tour,solvedBy
-                #return(self.finalPath.findPathLength(x,y),self.finalPath.tour)
                 TSP_db.submitSolution(problemName.get(),data[0],solveProblem_timeAllowed.get(),"ALG",datastr)
-            else:
-                print()
         except:
             messagebox.showerror("Error","Unable to solve")
 
@@ -324,7 +301,13 @@ def run():
 
 
 def addProblem():
-    TSP_db.addToDatabase(problemName.get())
+    try:
+        TSP_db.addToDatabase(problemName.get())
+    except:
+        messagebox.showerror("Error","Unable to add to database")
+
+
+
 
 #prompt and packing for taking the prolem name
 probNameFrame = tkinter.Frame(m,pady=15,bg='#ECECEC')
@@ -337,7 +320,7 @@ problemName.pack(side = tkinter.LEFT)
 #addProbFrame = tkinter.Frame(m, pady=10,padx=10)
 
 optionsFrame = tkinter.Frame(m,borderwidth=5,relief='groove')
-addProbFrame = tkinter.Frame(optionsFrame,bd=5,relief='groove')
+addProbFrame = tkinter.Frame(optionsFrame,bd=5)
 fetchSolutionFrame = tkinter.Frame(optionsFrame, pady=10,padx=10)
 solveProblemFrame = tkinter.Frame(optionsFrame, pady=10,padx=10)
 
@@ -389,13 +372,13 @@ solveProblem_plotPoints = tkinter.Button(solveProblemFrame,text="plot cities",co
 
 solveProblem_timeAllowedLabel = tkinter.Label(solveProblemFrame,text="time allowed").pack()
 solveProblem_timeAllowed = tkinter.Entry(solveProblemFrame,textvariable=timeIn)
-solveProblem_timeAllowed.insert(0,"0")
+solveProblem_timeAllowed.insert(20,"20")
 solveProblem_timeAllowed.pack()
-nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn,onvalue = 0, offvalue = 1)
+nn_option = tkinter.Checkbutton(solveProblemFrame, text="Nearest Neighbour",variable=nn,onvalue = 1, offvalue = 0)
 sa_option = tkinter.Checkbutton(solveProblemFrame, text="Simulated Annealing",variable=sa,onvalue = 1, offvalue = 0)
 nn_option.pack()
 sa_option.pack()
-nn_option.toggle()
+#nn_option.toggle()
 sa_option.toggle()
 
 solveProblem_btn = tkinter.Button(solveProblemFrame,text="Solve",command=run).pack(side = tkinter.TOP ,pady = 10)
